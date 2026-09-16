@@ -1,6 +1,14 @@
 <!--
 SYNC IMPACT REPORT (scratch — for review of this amendment)
-Version change: unversioned template → 1.0.0
+Version change: 1.0.0 → 1.0.1
+Bump rationale: PATCH — substituting the named development mail catcher (MailHog → MailDev)
+  is a clarification of an existing article, not a change of governance. The email decision
+  (interface-backed SMTP, button-triggered, config-only provider swap) is untouched.
+Modified principles: Article VIII (mail catcher named), Technology & Configuration Constraints
+  (servers list), Development Workflow (Phase 7 first step made tool-neutral)
+Added sections: Governance > Amendment log
+
+Prior report — version change: unversioned template → 1.0.0
 Bump rationale: initial ratification; every template placeholder resolved.
 Modified principles: n/a (initial adoption)
 Added sections:
@@ -91,7 +99,8 @@ request and response shapes typed to match the contracts.
 ### VIII. Email by Button, Never by Scheduler
 
 Email is sent through an `IEmailSender` interface with a single SMTP implementation. In
-development it delivers to MailHog on localhost. Sending is triggered ONLY by an explicit
+development it delivers to a local mail catcher — **MailDev**, listening for SMTP on port 1025
+with its web UI on <http://localhost:1080>. Sending is triggered ONLY by an explicit
 user action — the "Email me today's schedule" button — and NEVER by a timer, background
 service, hosted service, queue, or scheduled job. Switching to Gmail SMTP MUST be a
 configuration-only change (host, port, credentials, SSL flag in `appsettings`) requiring no
@@ -123,7 +132,7 @@ than debated. "We might want it later" is not a reason to build it today.
 - **Schema**: created and evolved with EF Core migrations. No hand-written SQL scripts.
 - **Environment**: Windows 11 with PowerShell. Every command given to the developer MUST use
   PowerShell syntax and Windows paths. Bash syntax MUST NOT be used.
-- **Servers**: the developer runs the API, the Vite dev server, and MailHog in their own
+- **Servers**: the developer runs the API, the Vite dev server, and MailDev in their own
   terminals. The agent MUST NOT start or stop servers; it states what to run and waits.
 
 ## Development Workflow & Quality Gates
@@ -131,7 +140,7 @@ than debated. "We might want it later" is not a reason to build it today.
 - **Phase order**: 1 constitution → 2 specify → 3 clarify → 4 stories tree and traceability
   matrix → 5 plan (plan.md, data-model.md, contracts) → 6 tasks then analyze → 7 implement.
   One phase per turn, then STOP.
-- **Implementation order inside Phase 7**: MailHog availability first, then the auth backend
+- **Implementation order inside Phase 7**: mail catcher availability first, then the auth backend
   proven working in Swagger, then the appointments backend proven in Swagger, then the React
   frontend. Each task is announced as `T-xx [US-yy] description` before it is executed.
 - **Story numbering**: `US-01..US-0n` for backend stories, continuing into frontend stories.
@@ -167,4 +176,12 @@ article here, the article wins.
 - **Complexity** carries the burden of proof. The default answer to "should we add a layer, a
   library, or an abstraction" is NO unless a named article requires it.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-16 | **Last Amended**: 2026-09-16
+### Amendment log
+
+- **1.0.1 (2026-09-16)** — Article VIII and the Technology section now name **MailDev** as the
+  development mail catcher instead of MailHog, because MailHog is not available on winget and
+  MailDev was installed instead. Both speak plain SMTP on port 1025, so the email decision
+  itself is unchanged; only the tool's name, its web UI port (1080, not 8025), and its install
+  command differ.
+
+**Version**: 1.0.1 | **Ratified**: 2026-09-16 | **Last Amended**: 2026-09-16
