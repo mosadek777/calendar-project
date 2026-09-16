@@ -32,6 +32,9 @@
 ## Notes
 
 - Validation passed on the first iteration.
+- Re-validated 2026-09-16 after the clarification session: 16/16 still passing, no state
+  changes, no regressions. The five answers tightened FR-006, FR-008, FR-015a, FR-019, FR-021,
+  and FR-023a without introducing technology terms.
 - No `[NEEDS CLARIFICATION]` markers were used. Where the description was silent, a reasonable
   default was chosen and recorded in the **Assumptions** section of `spec.md`. That list is the
   agenda for Phase 3 (`/speckit-clarify`) — each assumption is stated so it can be confirmed or

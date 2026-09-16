@@ -8,6 +8,22 @@
 
 **Input**: User description: "A person registers with email and password, signs in, and sees today's agenda on landing. They browse a month calendar where days holding appointments are visibly marked, pick a day, and see that day's appointments. They can create an appointment on the selected day (title, optional notes, date, start time, end time), edit it, and delete it. They can press a button to email themselves today's schedule. Each person sees only their own appointments."
 
+## Clarifications
+
+### Session 2026-09-16
+
+- Q: How long should a sign-in last, and what happens when it expires? → A: 8 hours, then the
+  next action returns the person to sign-in. No silent renewal, no "remember me".
+- Q: How should the person enter start and end times? → A: A free time field accepting any
+  minute. No preset slot list. End must still be after start, both on the same calendar day.
+- Q: What should happen when the person deletes an appointment? → A: An explicit confirmation
+  step, then permanent deletion. No undo, no restore, no archive.
+- Q: After signing in, should today's agenda and the month calendar be one screen or two? →
+  A: Two screens. Signing in lands on the agenda; the month calendar is reached by a
+  navigation control, and the person can move between them freely.
+- Q: What should the "email me today's schedule" message look like? → A: Plain text, one line
+  per appointment, with a subject line naming today's date. No HTML, no attachment.
+
 ## User Scenarios & Testing *(mandatory)*
 
 The six stories below are ordered by priority, and **that order is the cut line**: if the day
@@ -46,12 +62,15 @@ boundary works, even with no appointment features present.
    sign-up or sign-in, **Then** they are sent to the sign-in screen.
 6. **Given** a signed-in person, **When** they sign out, **Then** their session ends and
    internal screens are closed to them again.
+7. **Given** a session that began more than 8 hours ago, **When** the person takes their next
+   action, **Then** they are returned to the sign-in screen and must sign in again.
 
 ---
 
 ### User Story 2 - See the month and pick a day (Priority: P2)
 
-A signed-in person sees a month calendar. Days that hold at least one of their appointments
+A signed-in person reaches the month calendar screen from a navigation control. Days that hold
+at least one of their appointments
 are visibly marked, so the shape of the month is readable at a glance. Clicking a day selects
 it, and that day's appointments are listed in a panel beside or below the calendar, in time
 order. Moving to the previous or next month re-marks the days for the month now on screen.
@@ -155,9 +174,10 @@ it and confirm it is gone.
 
 ### User Story 5 - Land on today's agenda (Priority: P5)
 
-Immediately after signing in, the person sees today's appointments — the day's commitments in
-time order — without having to hunt for today on the calendar. If today is empty, the screen
-says so plainly.
+Immediately after signing in, the person lands on an agenda screen showing today's
+appointments — the day's commitments in time order — without having to hunt for today on the
+calendar. If today is empty, the screen says so plainly. The month calendar is a separate
+screen, one navigation click away, and the person can move between the two freely.
 
 **Why this priority**: It is the daily-use payoff and the first thing a returning person wants
 to see, but it is a convenience view over data the earlier stories already expose. If it is
@@ -174,6 +194,8 @@ landing screen lists exactly today's, in time order, and nothing else.
    signing in, **Then** the landing screen says plainly that nothing is scheduled today.
 3. **Given** the landing screen, **When** the person looks at it, **Then** each listed
    appointment shows at least its title and its start and end time.
+4. **Given** the agenda screen, **When** the person uses the navigation control, **Then** they
+   reach the month calendar screen, and can return to the agenda the same way.
 
 ---
 
@@ -214,8 +236,9 @@ no email arrives at any other time.
   account is created.
 - **Wrong password or unknown email at sign-in**: refused with a single message that does not
   reveal which of the two was wrong.
-- **Session expires while the person is working**: the next action they take sends them back
-  to sign-in rather than failing silently or showing a blank screen.
+- **Session expires while the person is working**: 8 hours after signing in, the next action
+  they take sends them back to sign-in rather than failing silently or showing a blank screen.
+  There is no warning beforehand and no silent renewal.
 - **End time equal to or before start time**: refused on both create and edit, with the same
   message.
 - **Appointment ending at or crossing midnight**: an appointment must start and end on the same
@@ -249,14 +272,18 @@ no email arrives at any other time.
 - **FR-005**: The system MUST let a registered person sign in with their email and password,
   and MUST refuse incorrect credentials with a message that does not reveal whether the email
   is registered.
-- **FR-006**: The system MUST keep the person signed in across page reloads for the life of
-  their session, and MUST let them sign out, ending the session.
+- **FR-006**: The system MUST keep the person signed in across page reloads for 8 hours from
+  sign-in, MUST return them to the sign-in screen on their first action after that, and MUST
+  let them sign out at any time, ending the session immediately. The system MUST NOT renew a
+  session silently.
 - **FR-007**: The system MUST close every screen other than sign-up and sign-in to people who
   are not signed in, redirecting them to sign-in.
 
 **The month calendar and the day panel (P2)**
 
-- **FR-008**: The system MUST show a month calendar to a signed-in person.
+- **FR-008**: The system MUST show a month calendar to a signed-in person on a screen separate
+  from the agenda screen, MUST provide a navigation control that reaches it, and MUST let the
+  person return to the agenda the same way.
 - **FR-009**: The system MUST visibly mark every day of the displayed month on which that
   person has at least one appointment, and MUST NOT mark days on which they have none.
 - **FR-010**: The system MUST let the person select a day and MUST list that day's
@@ -276,6 +303,8 @@ no email arrives at any other time.
   1000 characters.
 - **FR-015**: The system MUST require an end time strictly later than the start time on the
   same calendar day, and MUST refuse the appointment otherwise with a message saying so.
+- **FR-015a**: The system MUST accept any start or end time to the minute, and MUST NOT
+  restrict entry to a preset list of time slots.
 - **FR-016**: The system MUST enforce every validation rule on the server, independently of
   whatever the screen checks, so that a request bypassing the screen cannot store invalid data.
 - **FR-017**: The system MUST show a newly created appointment in the day's list and mark its
@@ -286,14 +315,16 @@ no email arrives at any other time.
 - **FR-018**: The system MUST let a person change any detail of one of their own appointments,
   including its date, applying the same validation rules as creation.
 - **FR-019**: The system MUST let a person permanently delete one of their own appointments,
-  after an explicit confirmation step.
+  after an explicit confirmation step, and MUST NOT offer any undo, restore, or archive — once
+  confirmed, the appointment is gone.
 - **FR-020**: The system MUST update the calendar marks and the day list after an edit or a
   delete, including removing the mark from a day that no longer holds any appointment.
 
 **Today's agenda (P5)**
 
 - **FR-021**: The system MUST show the person's appointments for the current local date, in
-  ascending start-time order, on the screen they land on immediately after signing in.
+  ascending start-time order, on a dedicated agenda screen that is the screen they land on
+  immediately after signing in.
 - **FR-022**: The system MUST state plainly on that screen when nothing is scheduled today.
 
 **Emailing today's schedule (P6)**
@@ -301,6 +332,9 @@ no email arrives at any other time.
 - **FR-023**: The system MUST provide a clearly labelled control that, when pressed, sends the
   signed-in person an email at their registered address containing today's appointments in
   ascending start-time order.
+- **FR-023a**: That email MUST be plain text — one line per appointment showing start time,
+  end time, and title, with any note beneath it — and MUST carry a subject line naming today's
+  date. The system MUST NOT send HTML, attachments, or calendar invitations.
 - **FR-024**: The system MUST send that email only in response to that control being pressed,
   and MUST NOT send email on any schedule, timer, or automatic trigger.
 - **FR-025**: The system MUST send an email stating that nothing is scheduled when the person
@@ -357,22 +391,27 @@ for the clarification phase; each one can be overturned there at low cost.
   calendars, or anyone acting on another person's behalf.
 - **Password rule is a minimum of 8 characters**, with no composition requirement, chosen to
   keep sign-up fast without being careless.
-- **Sign-in lasts for a fixed session and then requires signing in again.** There is no
-  silent renewal and no "remember me"; when a session ends the person signs in again.
+- **Sign-in lasts 8 hours** (confirmed in clarification), then the next action returns the
+  person to sign-in. No silent renewal, no "remember me", no warning before expiry.
 - **A failed sign-in gives one generic message** rather than distinguishing unknown email from
   wrong password, so the screen does not confirm which addresses are registered.
 - **All dates and times are the calendar dates and clock times of the person's own device.**
   There is no timezone handling, conversion, or display of a zone anywhere.
-- **An appointment starts and ends on the same calendar day.** Nothing spans midnight.
+- **An appointment starts and ends on the same calendar day** (confirmed in clarification).
+  Nothing spans midnight, and times are entered freely to the minute rather than chosen from
+  preset slots.
 - **Two appointments may occupy the same time.** The system never warns about or prevents an
   overlap.
 - **Title is required, 1–200 characters; notes are optional, up to 1000 characters.**
-- **Deletion is permanent and immediate** after confirmation; there is no archive, trash, or
-  undo.
+- **Deletion is permanent and immediate** after confirmation (confirmed in clarification);
+  there is no archive, trash, or undo.
 - **Every appointment for a day is shown at once**, with no paging or "show more", because a
   personal day rarely holds enough entries to need it.
-- **The email contains today's schedule as plain readable text** — title, start time, end time,
-  and note where present — with no attachment, no calendar invitation, and no links.
+- **The email contains today's schedule as plain readable text** (confirmed in clarification)
+  — one line per appointment with start time, end time, and title, notes beneath — under a
+  subject line naming today's date, with no HTML, attachment, calendar invitation, or links.
+- **The agenda and the month calendar are two separate screens** (confirmed in clarification).
+  Signing in lands on the agenda; a navigation control moves between the two.
 - **The email goes to the address the person registered with**, which is never verified and
   cannot be changed in this version.
 - **A single person uses the system at a time on a local machine**; there is no concurrent-use,
