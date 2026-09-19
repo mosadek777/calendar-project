@@ -93,7 +93,7 @@ unknown email would turn this endpoint into a way to discover which addresses ar
 
 | Claim | Value |
 |---|---|
-| `sub` / `ClaimTypes.NameIdentifier` | The user's `Id` — **the only source of identity for every other endpoint** |
+| `sub` | The user's `Id` — **the only source of identity for every other endpoint** |
 | `email` | The user's email, used for the schedule email's recipient |
 | `exp` | Issued time + 8 hours (clarification Q1) |
 | `iss`, `aud` | From `JwtOptions` |
@@ -104,6 +104,12 @@ Signed **HS256** with `Jwt:Key` from `appsettings.Development.json`, which is gi
 Validation in `Program.cs` sets `ValidateIssuer`, `ValidateAudience`, `ValidateLifetime`, and
 `ValidateIssuerSigningKey` all **true**, with `ClockSkew = TimeSpan.Zero` so that an 8-hour
 token expires at 8 hours rather than the default 8 hours and 5 minutes.
+
+**The claim is named `sub` on the wire and read back as `"sub"`.** Both of .NET's claim-type
+maps are cleared —  `DefaultOutboundClaimTypeMap` in `TokenService`, `DefaultInboundClaimTypeMap`
+in `Program.cs` — so the name never changes in transit. Writing `sub` and reading
+`ClaimTypes.NameIdentifier` happens to work while the default inbound map is in place and
+returns `null` the moment anyone clears it, which is a failure with no useful error message.
 
 **Never in any response**: `PasswordHash`, the signing key, or the `User` entity itself
 (Article V).

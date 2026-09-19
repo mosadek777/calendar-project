@@ -121,7 +121,7 @@ backend/Scheduler.Api/
 │   ├── RegisterRequest.cs / LoginRequest.cs / AuthResponse.cs
 │   ├── AppointmentRequest.cs / AppointmentResponse.cs
 │   ├── EmailResultResponse.cs
-│   └── Options/JwtOptions.cs / SmtpOptions.cs
+│   └── JwtOptions.cs / SmtpOptions.cs      # config binding, no subfolder
 ├── Program.cs
 ├── appsettings.json                  # committed, no secrets
 └── appsettings.Development.json      # GITIGNORED — key, connection string, SMTP
@@ -294,7 +294,9 @@ The sender stays ignorant of the domain, which is what makes it swappable.
 ### Ownership — how Article VI is actually enforced
 
 1. Every appointment action carries `[Authorize]`, so an anonymous request dies in middleware.
-2. The controller reads the id from the token: `User.FindFirstValue(ClaimTypes.NameIdentifier)`.
+2. The controller reads the id from the token: `User.FindFirstValue("sub")` — the same literal
+   name `TokenService` writes, with both claim-type maps cleared so nothing renames it in
+   transit.
 3. Every `IAppointmentService` method takes `Guid userId` as its **first parameter**.
 4. Every query is filtered by it: `.Where(a => a.UserId == userId)`. A single-item fetch is
    `FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId)`.

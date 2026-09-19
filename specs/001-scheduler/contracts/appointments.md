@@ -4,7 +4,7 @@
 **Every endpoint carries `[Authorize]`.** Without a valid token the request is answered 401 by
 middleware and the controller never runs.
 
-**Identity**: the controller reads `User.FindFirstValue(ClaimTypes.NameIdentifier)` and passes
+**Identity**: the controller reads `User.FindFirstValue("sub")` and passes
 that `Guid userId` as the first argument of every service call. No DTO on this page has a user
 id property (FR-027, D2 in [plan.md](../plan.md)).
 

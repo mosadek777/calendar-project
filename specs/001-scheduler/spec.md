@@ -320,14 +320,20 @@ no email arrives at any other time.
 - **FR-020**: The system MUST update the calendar marks and the day list after an edit or a
   delete, including removing the mark from a day that no longer holds any appointment.
 
-**Today's agenda (P5)**
+**Today's agenda (P5)** — *conditional. This band is the second to be dropped if time runs
+out. If dropped, signing in lands on the month calendar, which already opens with today
+selected, and FR-021 and FR-022 are knowingly unmet. A compliance audit should read these two
+as satisfied-or-dropped, not as failures.*
 
 - **FR-021**: The system MUST show the person's appointments for the current local date, in
   ascending start-time order, on a dedicated agenda screen that is the screen they land on
   immediately after signing in.
 - **FR-022**: The system MUST state plainly on that screen when nothing is scheduled today.
 
-**Emailing today's schedule (P6)**
+**Emailing today's schedule (P6)** — *conditional. This band is the first to be dropped if time
+runs out, and it is dropped whole: FR-023 through FR-026 stand or fall together, because an
+endpoint with no button, or a button with no endpoint, is worse than neither. If dropped, the
+person reads today's schedule on screen and loses no information.*
 
 - **FR-023**: The system MUST provide a clearly labelled control that, when pressed, sends the
   signed-in person an email at their registered address containing today's appointments in
