@@ -13,7 +13,7 @@ export function Register() {
       submitLabel="Create account"
       onSubmit={async (email, password) => {
         await signUp(email, password)
-        navigate('/', { replace: true })
+        navigate('/calendar', { replace: true })
       }}
       footer={{ prompt: 'Already have an account?', linkLabel: 'Sign in', to: '/login' }}
     />

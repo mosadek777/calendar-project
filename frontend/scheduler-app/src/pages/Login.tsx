@@ -13,7 +13,7 @@ export function Login() {
       submitLabel="Sign in"
       onSubmit={async (email, password) => {
         await signIn(email, password)
-        navigate('/', { replace: true })
+        navigate('/calendar', { replace: true })
       }}
       footer={{ prompt: 'No account yet?', linkLabel: 'Create one', to: '/register' }}
     />

@@ -10,7 +10,7 @@
 > `[P]` marks a task that can run in parallel with its neighbours — different files, no
 > dependency on an unfinished task.
 
-**80 tasks.** Order is the cut line from `plan.md`. Work top to bottom. **Everything below the
+**81 tasks.** Order is the cut line from `plan.md`. Work top to bottom. **Everything below the
 point you reach when the day ends is dropped**, and what exists still works.
 
 ---
@@ -106,18 +106,18 @@ Blocking: every story below needs these. Nothing here is story-specific.
 - [X] T-47 [US-09] Create `frontend\scheduler-app\src\lib\api.ts` — one `fetch` wrapper that prefixes the API base URL, attaches `Authorization: Bearer`, throws a typed error carrying the server's message, and **on 401 clears the session and redirects to `/login`** (this is how an expired 8-hour token becomes a return to sign-in, FR-006)
 - [X] T-48 [US-09] Create `frontend\scheduler-app\src\context\AuthContext.tsx` — holds `{ token, email, signIn, signUp, signOut }`, hydrates from `localStorage` on mount. **React Context only**, no state library
 - [X] T-49 [US-09] Create `frontend\scheduler-app\src\components\ProtectedRoute.tsx` and wire `react-router-dom` in `src\App.tsx`: `/login` and `/register` open; `/` and `/calendar` guarded
-- [X] T-50 [US-09] [P] Create `frontend\scheduler-app\src\pages\Login.tsx` and `Register.tsx` using shadcn `card`, `input`, `label`, `button`, showing the server's refusal inline on the form
+- [X] T-50 [US-09] [P] Create `frontend\scheduler-app\src\pages\Login.tsx` and `Register.tsx` using shadcn `card`, `input`, `label`, `button`, showing the server's refusal inline on the form. **Changed after T-57**: both now redirect to `/calendar`, not `/`, because the landing route is still a placeholder. This is exactly the fallback the plan specifies for a dropped US-13 — **T-68 must reverse it** if the agenda screen is built
 - [ ] T-51 [US-09] **Prove in the browser**: register → land; reload → still signed in; sign out → back to `/login`; type `/calendar` while signed out → bounced to `/login`; wrong password → inline generic message
 
 ---
 
 ## Phase 6 — Month calendar and day panel (US-10)
 
-- [ ] T-52 [US-10] Create `frontend\scheduler-app\src\pages\CalendarPage.tsx` rendering shadcn's `Calendar`. **Do not hand-build a month grid and do not add an events-calendar library** — Article VII
-- [ ] T-53 [US-10] Fetch the displayed month's range on mount and on month change, and build a `Set` of `yyyy-MM-dd` strings from the result
-- [ ] T-54 [US-10] Mark busy days using react-day-picker's `modifiers` / `modifiersClassNames` driven by that set
-- [ ] T-55 [US-10] [P] Create `frontend\scheduler-app\src\components\AppointmentList.tsx` — renders a day's appointments sorted by start time showing title and both times, and a plain "nothing scheduled" message when empty
-- [ ] T-56 [US-10] Wire day selection to the panel, defaulting the selected day to today, and add the nav control between `/` and `/calendar`
+- [X] T-52 [US-10] Create `frontend\scheduler-app\src\pages\CalendarPage.tsx` rendering shadcn's `Calendar`. **Do not hand-build a month grid and do not add an events-calendar library** — Article VII
+- [X] T-53 [US-10] Fetch the displayed month's range on mount and on month change, and build a `Set` of `yyyy-MM-dd` strings from the result
+- [X] T-54 [US-10] Mark busy days using react-day-picker's `modifiers` / `modifiersClassNames` driven by that set
+- [X] T-55 [US-10] [P] Create `frontend\scheduler-app\src\components\AppointmentList.tsx` — renders a day's appointments sorted by start time showing title and both times, and a plain "nothing scheduled" message when empty
+- [X] T-56 [US-10] Wire day selection to the panel, defaulting the selected day to today, and add the nav control between `/` and `/calendar`
 - [ ] T-57 [US-10] **Prove in the browser**: marked days match the data exactly; clicking a marked day lists it in time order; an empty day shows the message; month navigation re-marks; a second account sees only its own marks
 
 ---
@@ -150,7 +150,7 @@ Blocking: every story below needs these. Nothing here is story-specific.
 selected. One route deleted, one redirect target changed. Nothing in Phase 6 is touched.
 
 - [ ] T-67 [US-13] Create `frontend\scheduler-app\src\pages\Agenda.tsx` — fetch today as a single-day range, render with the existing `AppointmentList`, and say plainly when nothing is scheduled
-- [ ] T-68 [US-13] Point `/` at the agenda and make both sign-in and sign-up land there
+- [ ] T-68 [US-13] Point `/` at the agenda and make both sign-in and sign-up land there. **This reverses the change made after T-57**, where both were redirected to `/calendar` because `/` was a placeholder — see the note on T-50. If US-13 is dropped, leave the redirect pointing at `/calendar` and delete the placeholder route instead
 - [ ] T-69 [US-13] **Prove in the browser**: sign in → today's appointments only, in time order; an empty today shows the message; nav reaches the calendar and back
 
 ---
@@ -171,11 +171,28 @@ button with no endpoint — worse than neither. Drop the pair together.
 
 ---
 
+## Phase 10b — Visual design pass
+
+Requested during Phase 7, deliberately deferred to here. It runs **after every screen exists**
+and **before** verification, so the checklist in T-80 is walked against the finished look.
+
+**Placement note**: the request said "after T-71", but T-71 registers `IEmailSender` in DI and
+lands before the email button (T-76) is built. Placed after T-77 instead, which is what "once
+all screens exist" requires. Move it back if the literal position was intended.
+
+- [ ] T-78 [DESIGN] One visual pass across **every** screen — sign-in, sign-up, agenda,
+  calendar with its day panel, the appointment dialog, and the delete confirmation. **Templates
+  and Tailwind classes only**: no changes to handlers, state, fetches, routing, validation, or
+  any other logic. Skip the screens that were dropped. Nothing outside JSX markup and
+  `className` values may change in this task, and `git diff` should show no altered behaviour.
+
+---
+
 ## Phase 11 — Verification (project Phases 8 and 9)
 
-- [ ] T-78 [VERIFY] **Write** the manual test checklist to `specs\001-scheduler\checklists\manual-test.md`, one checkbox per acceptance criterion of every story that was actually built, grouped by story and marked with the Swagger or browser step that proves it. Skip the stories that were dropped
-- [ ] T-79 [VERIFY] Walk that checklist end to end in a clean browser profile, recording each result. No automated test project — Article IX
-- [ ] T-80 [VERIFY] Audit the delivered code against all nine constitution articles, reporting every violation found: banned folders or patterns, entities crossing a controller, any client-supplied user id, any non-`async` DB call, `appsettings.Development.json` in git, any non-shadcn UI component, any background job
+- [ ] T-79 [VERIFY] **Write** the manual test checklist to `specs\001-scheduler\checklists\manual-test.md`, one checkbox per acceptance criterion of every story that was actually built, grouped by story and marked with the Swagger or browser step that proves it. Skip the stories that were dropped
+- [ ] T-80 [VERIFY] Walk that checklist end to end in a clean browser profile, recording each result. No automated test project — Article IX
+- [ ] T-81 [VERIFY] Audit the delivered code against all nine constitution articles, reporting every violation found: banned folders or patterns, entities crossing a controller, any client-supplied user id, any non-`async` DB call, `appsettings.Development.json` in git, any non-shadcn UI component, any background job
 
 ---
 

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
+import { CalendarPage } from '@/pages/CalendarPage'
 import { Login } from '@/pages/Login'
 import { Register } from '@/pages/Register'
 
@@ -33,7 +34,7 @@ export default function App() {
       {/* Everything else requires a session */}
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<SignedInPlaceholder />} />
-        <Route path="/calendar" element={<SignedInPlaceholder />} />
+        <Route path="/calendar" element={<CalendarPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
