@@ -188,9 +188,9 @@ button with no endpoint — worse than neither. Drop the pair together.
 - [X] T-72 [US-08] [P] Create `backend\Scheduler.Api\DTOs\EmailResultResponse.cs` — `Sent` (bool) and `Message` (string)
 - [X] T-73 [US-08] Add `EmailTodayAsync(Guid userId)` to `AppointmentService.cs` — today is `DateOnly.FromDateTime(DateTime.Now)` (local, per the spec); build **plain text** with subject `Your schedule for <long date>` and one line per appointment `09:30–10:15  Title`, notes indented beneath; an empty day still sends, saying so
 - [X] T-74 [US-08] **Changed to `POST /api/appointments/email-day?date=`, scoped to the selected day** — add it to `AppointmentsController.cs` — no body, `[Authorize]`, recipient read from the **account**, never the request. Return `sent: false` with a message on SMTP failure rather than a 500
-- [ ] T-75 [US-08] **Prove with MailDev**: the message appears at <http://localhost:1080> with the right subject and ordering; the empty-day case arrives too; stopping `maildev` produces `sent: false` and leaves all appointments untouched
+- [X] T-75 [US-08] **Prove with MailDev**: the message appears at <http://localhost:1080> with the right subject and ordering; the empty-day case arrives too; stopping `maildev` produces `sent: false` and leaves all appointments untouched
 - [X] T-76 [US-14] Add the button to `frontend\scheduler-app\src\pages\Agenda.tsx` (or `CalendarPage.tsx` if US-13 was dropped), **disabled while the request is in flight** so a double-click cannot send two emails, showing success or failure inline
-- [ ] T-77 [US-14] **Prove in the browser**: one press → one message in MailDev; a rapid double-click → still one; MailDev stopped → failure message, list unchanged; idle with the page open → zero messages
+- [X] T-77 [US-14] **Prove in the browser**: one press → one message in MailDev; a rapid double-click → still one; MailDev stopped → failure message, list unchanged; idle with the page open → zero messages
 
 ---
 
