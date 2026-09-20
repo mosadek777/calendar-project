@@ -118,16 +118,16 @@ Blocking: every story below needs these. Nothing here is story-specific.
 - [X] T-54 [US-10] Mark busy days using react-day-picker's `modifiers` / `modifiersClassNames` driven by that set
 - [X] T-55 [US-10] [P] Create `frontend\scheduler-app\src\components\AppointmentList.tsx` — renders a day's appointments sorted by start time showing title and both times, and a plain "nothing scheduled" message when empty
 - [X] T-56 [US-10] Wire day selection to the panel, defaulting the selected day to today, and add the nav control between `/` and `/calendar`
-- [ ] T-57 [US-10] **Prove in the browser**: marked days match the data exactly; clicking a marked day lists it in time order; an empty day shows the message; month navigation re-marks; a second account sees only its own marks
+- [X] T-57 [US-10] **Prove in the browser**: marked days match the data exactly; clicking a marked day lists it in time order; an empty day shows the message; month navigation re-marks; a second account sees only its own marks
 
 ---
 
 ## Phase 7 — Create an appointment (US-11)
 
-- [ ] T-58 [US-11] Create `frontend\scheduler-app\src\components\AppointmentForm.tsx` inside a shadcn `dialog` — title, notes, date, start time, end time, with the date pre-filled from the selected day. Take an **optional** appointment prop now, so US-12 reuses this component instead of building a second form
-- [ ] T-59 [US-11] **The time-format gotcha**: `<input type="time">` yields `"09:00"`, which will **not** bind to a `TimeOnly` and returns a 400 that looks like nothing is wrong. Add a helper in `frontend\scheduler-app\src\lib\api.ts` that appends `":00"` on the way out and trims the seconds on the way in. Do this **before** the first create attempt, not after debugging one
-- [ ] T-60 [US-11] Wire submit to `POST /api/appointments`, then refetch the month so the new appointment appears in the day's list and its day becomes marked, **without a page reload**
-- [ ] T-61 [US-11] Surface server refusals on the form — the server's message wins whenever it disagrees with the client-side check
+- [X] T-58 [US-11] Create `frontend\scheduler-app\src\components\AppointmentForm.tsx` inside a shadcn `dialog` — title, notes, date, start time, end time, with the date pre-filled from the selected day. Take an **optional** appointment prop now, so US-12 reuses this component instead of building a second form
+- [X] T-59 [US-11] **The time-format gotcha**: `<input type="time">` yields `"09:00"`, which will **not** bind to a `TimeOnly` and returns a 400 that looks like nothing is wrong. Add a helper in `frontend\scheduler-app\src\lib\api.ts` that appends `":00"` on the way out and trims the seconds on the way in. Do this **before** the first create attempt, not after debugging one
+- [X] T-60 [US-11] Wire submit to `POST /api/appointments`, then refetch the month so the new appointment appears in the day's list and its day becomes marked, **without a page reload**
+- [X] T-61 [US-11] Surface server refusals on the form — the server's message wins whenever it disagrees with the client-side check
 - [ ] T-62 [US-11] **Prove in the browser**: add to an empty day → appears and the day becomes marked; empty title → message; end ≤ start → message; `09:07` accepted; empty notes fine
 
 ---

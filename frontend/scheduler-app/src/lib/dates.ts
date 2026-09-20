@@ -27,6 +27,24 @@ export function toDisplayTime(value: string): string {
   return value.slice(0, 5)
 }
 
+/**
+ * THE TIME-FORMAT GOTCHA (T-59).
+ *
+ * `<input type="time">` yields "09:30". A TimeOnly will not bind to that, and the
+ * server answers 400 in a way that looks like nothing is wrong with the form. Every
+ * time leaving this app goes through here first.
+ */
+export function toServerTime(inputValue: string): string {
+  if (!inputValue) return inputValue
+  // "09:30" -> "09:30:00"; anything already carrying seconds is left alone.
+  return inputValue.length === 5 ? `${inputValue}:00` : inputValue
+}
+
+/** The inverse: "09:30:00" -> "09:30", for putting a value back into a time input. */
+export function toInputTime(serverValue: string): string {
+  return serverValue.slice(0, 5)
+}
+
 export function formatLongDate(date: Date): string {
   return date.toLocaleDateString(undefined, {
     weekday: 'long',
