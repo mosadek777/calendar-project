@@ -5,3 +5,5 @@ dist/
 *.user
 appsettings.Development.json
 .vs/
+
+design-refs/

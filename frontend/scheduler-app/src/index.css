@@ -24,6 +24,8 @@
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
+    --color-border-strong: var(--border-strong);
+    --color-surface-hover: var(--surface-hover);
     --color-destructive: var(--destructive);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
@@ -83,25 +85,34 @@
     --sidebar-ring: oklch(0.708 0 0);
 }
 
+/*
+ * Dark is the default (index.html carries class="dark").
+ * Register: deep near-black grounds, surfaces lifted a few percent and separated
+ * by hairline borders rather than shadow. White is the loudest thing on screen and
+ * is spent only on primary actions and the selected day. Indigo is the single
+ * accent, spent only on the busy-day dot, focus rings, today, and the active nav.
+ */
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
+    --background: oklch(0.125 0.004 264);
+    --foreground: oklch(0.97 0.002 264);
+    --card: oklch(0.165 0.004 264);
+    --card-foreground: oklch(0.97 0.002 264);
+    --popover: oklch(0.185 0.005 264);
+    --popover-foreground: oklch(0.97 0.002 264);
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.145 0.004 264);
+    --secondary: oklch(0.225 0.005 264);
+    --secondary-foreground: oklch(0.97 0.002 264);
+    --muted: oklch(0.215 0.005 264);
+    --muted-foreground: oklch(0.62 0.01 264);
+    --accent: oklch(0.62 0.19 264);
+    --accent-foreground: oklch(0.98 0.002 264);
+    --destructive: oklch(0.66 0.2 22);
+    --border: oklch(1 0 0 / 8%);
+    --border-strong: oklch(1 0 0 / 14%);
+    --input: oklch(1 0 0 / 10%);
+    --ring: oklch(0.62 0.19 264);
+    --surface-hover: oklch(1 0 0 / 5%);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
     --chart-3: oklch(0.439 0 0);
@@ -122,9 +133,32 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     }
   html {
     @apply font-sans;
+    color-scheme: dark;
     }
+
+  /* Times and dates line up column-wise wherever they are listed. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    }
+
+  /* The small-caps label above a numeral — "SEP" over "20", "SUN MON TUE". */
+  .label-caps {
+    @apply text-[0.625rem] font-medium uppercase tracking-[0.12em];
+    }
+}
+
+/* Motion is bounded to page transitions and list enter/exit, and is switched off
+   entirely for anyone who asks for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { AlertCircle, CalendarPlus, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -119,7 +120,16 @@ export function AppointmentForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit appointment' : 'New appointment'}</DialogTitle>
+          <div className="border-border bg-background/60 text-accent mb-1 flex size-9 items-center justify-center rounded-lg border">
+            {isEdit ? (
+              <Pencil className="size-4" aria-hidden />
+            ) : (
+              <CalendarPlus className="size-4" aria-hidden />
+            )}
+          </div>
+          <DialogTitle className="tracking-tight">
+            {isEdit ? 'Edit appointment' : 'New appointment'}
+          </DialogTitle>
           <DialogDescription>
             {isEdit
               ? 'Change any detail, including the date.'
@@ -127,66 +137,96 @@ export function AppointmentForm({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title" className="text-muted-foreground text-xs">
+              Title
+            </Label>
             <Input
               id="title"
               value={title}
               maxLength={200}
+              placeholder="Dentist"
               onChange={(e) => setTitle(e.target.value)}
               autoFocus
+              className="bg-background/60 h-11"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="notes">Notes (optional)</Label>
+            <Label htmlFor="notes" className="text-muted-foreground text-xs">
+              Notes <span className="text-muted-foreground/60">(optional)</span>
+            </Label>
             <Textarea
               id="notes"
               value={notes}
               maxLength={1000}
               rows={3}
+              placeholder="Anything worth remembering"
               onChange={(e) => setNotes(e.target.value)}
+              className="bg-background/60 resize-none"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="date">Date</Label>
-            <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            <Label htmlFor="date" className="text-muted-foreground text-xs">
+              Date
+            </Label>
+            <Input
+              id="date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="bg-background/60 tnum h-11"
+            />
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <div className="flex flex-1 flex-col gap-2">
-              <Label htmlFor="startTime">Start</Label>
+              <Label htmlFor="startTime" className="text-muted-foreground text-xs">
+                Start
+              </Label>
               <Input
                 id="startTime"
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
+                className="bg-background/60 tnum h-11"
               />
             </div>
             <div className="flex flex-1 flex-col gap-2">
-              <Label htmlFor="endTime">End</Label>
+              <Label htmlFor="endTime" className="text-muted-foreground text-xs">
+                End
+              </Label>
               <Input
                 id="endTime"
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
+                className="bg-background/60 tnum h-11"
               />
             </div>
           </div>
 
           {error && (
-            <p role="alert" className="text-destructive text-sm">
+            <p
+              role="alert"
+              className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-2 rounded-md border px-3 py-2.5 text-sm"
+            >
+              <AlertCircle className="mt-px size-4 shrink-0" aria-hidden />
               {error}
             </p>
           )}
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <DialogFooter className="mt-2 gap-2">
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={busy}>
+            <Button
+              type="submit"
+              disabled={busy}
+              className="font-medium transition-transform active:scale-[0.98]"
+            >
               {busy ? 'Saving…' : isEdit ? 'Save changes' : 'Add appointment'}
             </Button>
           </DialogFooter>
