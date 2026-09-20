@@ -112,7 +112,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Only outside Development. Locally the Vite app talks to the HTTP endpoint, which
+// avoids every request failing on an untrusted dev certificate. This app is never
+// deployed (Article IX), so the redirect exists only for correctness.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors(FrontendPolicy);
 app.UseAuthentication();
 app.UseAuthorization();

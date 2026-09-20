@@ -72,7 +72,7 @@ Blocking: every story below needs these. Nothing here is story-specific.
 - [X] T-29 [US-04] Create `backend\Scheduler.Api\Services\IAppointmentService.cs` and `AppointmentService.cs` with `GetRangeAsync(Guid userId, DateOnly from, DateOnly to)` — `Where(a => a.UserId == userId && a.Date >= from && a.Date <= to)`, ordered by `Date` then `StartTime`, `await`ed, mapped to DTOs by hand
 - [X] T-30 [US-04] Create `backend\Scheduler.Api\Controllers\AppointmentsController.cs` with `[Authorize]` on the class and a `GET` action taking `from` and `to`, passing the claim-derived `userId` as the **first argument**. Refuse `to < from` with 400
 - [X] T-31 [US-04] Register `IAppointmentService` in `Program.cs` DI
-- [ ] T-32 [US-04] **Prove in Swagger**: insert two appointments directly in the database, then confirm a month range returns both, a single-day range (`from == to`) returns one, an empty range returns `[]` with 200, and ordering is by date then start time
+- [X] T-32 [US-04] **Prove in Swagger**: insert two appointments directly in the database, then confirm a month range returns both, a single-day range (`from == to`) returns one, an empty range returns `[]` with 200, and ordering is by date then start time
 
 ---
 
@@ -99,14 +99,14 @@ Blocking: every story below needs these. Nothing here is story-specific.
 
 ## Phase 5 — Frontend auth (US-09) · **Never cut**
 
-- [ ] T-43 [US-09] Scaffold the app: `npm create vite@latest scheduler-app -- --template react-ts` inside `frontend\`, then `npm install` in `frontend\scheduler-app`
-- [ ] T-44 [US-09] Install and configure Tailwind CSS in `frontend\scheduler-app`, wiring the directives into `src\index.css`
-- [ ] T-45 [US-09] Run `npx shadcn@latest init`, then add exactly: `button`, `input`, `textarea`, `label`, `card`, `dialog`, `alert-dialog`, `calendar`. No other component library — Article VII
-- [ ] T-46 [US-09] [P] Create `frontend\scheduler-app\src\lib\types.ts` mirroring the contracts: `AuthResponse`, `AppointmentResponse`, `AppointmentRequest`
-- [ ] T-47 [US-09] Create `frontend\scheduler-app\src\lib\api.ts` — one `fetch` wrapper that prefixes the API base URL, attaches `Authorization: Bearer`, throws a typed error carrying the server's message, and **on 401 clears the session and redirects to `/login`** (this is how an expired 8-hour token becomes a return to sign-in, FR-006)
-- [ ] T-48 [US-09] Create `frontend\scheduler-app\src\context\AuthContext.tsx` — holds `{ token, email, signIn, signUp, signOut }`, hydrates from `localStorage` on mount. **React Context only**, no state library
-- [ ] T-49 [US-09] Create `frontend\scheduler-app\src\components\ProtectedRoute.tsx` and wire `react-router-dom` in `src\App.tsx`: `/login` and `/register` open; `/` and `/calendar` guarded
-- [ ] T-50 [US-09] [P] Create `frontend\scheduler-app\src\pages\Login.tsx` and `Register.tsx` using shadcn `card`, `input`, `label`, `button`, showing the server's refusal inline on the form
+- [X] T-43 [US-09] Scaffold the app: `npm create vite@latest scheduler-app -- --template react-ts` inside `frontend\`, then `npm install` in `frontend\scheduler-app`
+- [X] T-44 [US-09] Install and configure Tailwind CSS in `frontend\scheduler-app`, wiring the directives into `src\index.css`
+- [X] T-45 [US-09] Run `npx shadcn@latest init`, then add exactly: `button`, `input`, `textarea`, `label`, `card`, `dialog`, `alert-dialog`, `calendar`. No other component library — Article VII
+- [X] T-46 [US-09] [P] Create `frontend\scheduler-app\src\lib\types.ts` mirroring the contracts: `AuthResponse`, `AppointmentResponse`, `AppointmentRequest`
+- [X] T-47 [US-09] Create `frontend\scheduler-app\src\lib\api.ts` — one `fetch` wrapper that prefixes the API base URL, attaches `Authorization: Bearer`, throws a typed error carrying the server's message, and **on 401 clears the session and redirects to `/login`** (this is how an expired 8-hour token becomes a return to sign-in, FR-006)
+- [X] T-48 [US-09] Create `frontend\scheduler-app\src\context\AuthContext.tsx` — holds `{ token, email, signIn, signUp, signOut }`, hydrates from `localStorage` on mount. **React Context only**, no state library
+- [X] T-49 [US-09] Create `frontend\scheduler-app\src\components\ProtectedRoute.tsx` and wire `react-router-dom` in `src\App.tsx`: `/login` and `/register` open; `/` and `/calendar` guarded
+- [X] T-50 [US-09] [P] Create `frontend\scheduler-app\src\pages\Login.tsx` and `Register.tsx` using shadcn `card`, `input`, `label`, `button`, showing the server's refusal inline on the form
 - [ ] T-51 [US-09] **Prove in the browser**: register → land; reload → still signed in; sign out → back to `/login`; type `/calendar` while signed out → bounced to `/login`; wrong password → inline generic message
 
 ---
