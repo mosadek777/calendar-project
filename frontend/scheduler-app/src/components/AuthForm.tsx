@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { AlertCircle, CalendarDays, Lock, Mail } from 'lucide-react'
+import { AlertCircle, CalendarDays } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,12 +13,6 @@ interface AuthFormProps {
   onSubmit: (email: string, password: string) => Promise<void>
   footer: { prompt: string; linkLabel: string; to: string }
 }
-
-const points = [
-  { icon: CalendarDays, text: 'See your whole month at a glance' },
-  { icon: Mail, text: 'Send any day’s schedule to your inbox' },
-  { icon: Lock, text: 'Your appointments are visible only to you' },
-]
 
 /** Shared by Login and Register — the two differ only in their labels and handler. */
 export function AuthForm({ title, description, submitLabel, onSubmit, footer }: AuthFormProps) {
@@ -43,44 +37,48 @@ export function AuthForm({ title, description, submitLabel, onSubmit, footer }: 
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center p-4">
-      <div className="border-border bg-card grid w-full max-w-4xl overflow-hidden rounded-xl border md:grid-cols-2">
-        {/* Quiet brand panel. Drops away below md, where the lockup above the form
-            carries the identity instead. */}
-        <aside className="border-border hidden flex-col justify-between gap-10 border-r p-8 md:flex">
-          <div>
-            <span className="flex items-center gap-2 font-semibold tracking-tight">
-              <CalendarDays className="text-accent size-[18px]" strokeWidth={2} aria-hidden />
-              Scheduler
-            </span>
-            <p className="text-muted-foreground mt-6 text-sm leading-relaxed">
-              A calendar that stays out of the way. Pick a day, see what is on it, and get on
-              with the rest.
-            </p>
-          </div>
+    // bg-background underneath means a missing photograph degrades to the gradient
+    // alone rather than to a white page.
+    <div className="bg-background relative min-h-svh w-full overflow-hidden">
+      <img
+        src="/auth-bg.jpg"
+        alt=""
+        aria-hidden
+        className="absolute inset-0 size-full object-cover object-center"
+      />
 
-          <ul className="flex flex-col gap-4">
-            {points.map(({ icon: Icon, text }) => (
-              <li key={text} className="text-muted-foreground flex items-start gap-3 text-sm">
-                <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
-                {text}
-              </li>
-            ))}
-          </ul>
-        </aside>
+      {/* Base wash: keeps text readable anywhere on the photograph. */}
+      <div className="from-background/75 via-background/55 to-background/85 absolute inset-0 bg-gradient-to-b" />
 
-        <div className="p-6 sm:p-8">
-          <span className="mb-8 flex items-center gap-2 font-semibold tracking-tight md:hidden">
+      {/* Stronger on the side the form sits: rightwards from lg, downwards below it,
+          so the panel always has something calm underneath. */}
+      <div className="to-background/80 absolute inset-0 bg-gradient-to-b from-transparent via-transparent lg:bg-gradient-to-r lg:via-transparent" />
+
+      <div className="relative mx-auto flex min-h-svh max-w-6xl flex-col items-center justify-center gap-12 px-5 py-14 lg:flex-row lg:justify-between lg:gap-20 lg:px-8">
+        {/* Directly on the photograph — no panel behind it. */}
+        <div className="w-full max-w-lg lg:flex-1">
+          <span className="flex items-center gap-2 text-sm font-semibold tracking-tight text-white drop-shadow-sm">
             <CalendarDays className="text-accent size-[18px]" strokeWidth={2} aria-hidden />
             Scheduler
           </span>
 
-          <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-          <p className="text-muted-foreground mt-1.5 text-sm">{description}</p>
+          <h2 className="mt-8 text-3xl leading-[1.1] font-semibold tracking-tight text-balance text-white drop-shadow-md sm:text-4xl lg:text-5xl">
+            Your days, quietly in order.
+          </h2>
 
-          <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5" noValidate>
+          <p className="mt-5 max-w-md text-base leading-relaxed text-white/70 drop-shadow-sm">
+            Pick a day, see what is on it, and get on with the rest.
+          </p>
+        </div>
+
+        {/* Frosted glass: floating above the image rather than cut out of it. */}
+        <div className="w-full max-w-md rounded-2xl border border-white/15 bg-white/[0.07] p-6 shadow-2xl shadow-black/40 backdrop-blur-xl sm:p-8 lg:w-[26rem] lg:shrink-0">
+          <h1 className="text-xl font-semibold tracking-tight text-white">{title}</h1>
+          <p className="mt-1.5 text-sm text-white/60">{description}</p>
+
+          <form onSubmit={handleSubmit} className="mt-7 flex flex-col gap-5" noValidate>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-muted-foreground text-xs">
+              <Label htmlFor="email" className="text-xs text-white/70">
                 Email
               </Label>
               <Input
@@ -91,12 +89,12 @@ export function AuthForm({ title, description, submitLabel, onSubmit, footer }: 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-background/60 h-11"
+                className="h-11 border-white/15 bg-white/5 text-white placeholder:text-white/35 focus-visible:border-white/25"
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="password" className="text-muted-foreground text-xs">
+              <Label htmlFor="password" className="text-xs text-white/70">
                 Password
               </Label>
               <Input
@@ -107,14 +105,14 @@ export function AuthForm({ title, description, submitLabel, onSubmit, footer }: 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-background/60 h-11"
+                className="h-11 border-white/15 bg-white/5 text-white placeholder:text-white/35 focus-visible:border-white/25"
               />
             </div>
 
             {error && (
               <p
                 role="alert"
-                className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-2 rounded-md border px-3 py-2.5 text-sm"
+                className="border-destructive/40 bg-destructive/15 text-destructive flex items-start gap-2 rounded-md border px-3 py-2.5 text-sm backdrop-blur-sm"
               >
                 <AlertCircle className="mt-px size-4 shrink-0" aria-hidden />
                 {error}
@@ -124,16 +122,16 @@ export function AuthForm({ title, description, submitLabel, onSubmit, footer }: 
             <Button
               type="submit"
               disabled={busy}
-              className="h-11 w-full font-medium transition-transform active:scale-[0.99]"
+              className="h-11 w-full bg-white font-medium text-neutral-950 transition-transform hover:bg-white/90 active:scale-[0.99]"
             >
               {busy ? 'Please wait…' : submitLabel}
             </Button>
 
-            <p className="text-muted-foreground text-center text-sm">
+            <p className="text-center text-sm text-white/60">
               {footer.prompt}{' '}
               <Link
                 to={footer.to}
-                className="text-foreground decoration-border hover:decoration-foreground underline underline-offset-4 transition-colors"
+                className="text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white"
               >
                 {footer.linkLabel}
               </Link>
