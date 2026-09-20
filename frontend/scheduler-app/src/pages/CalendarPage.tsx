@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AppointmentForm } from '@/components/AppointmentForm'
 import { AppointmentList } from '@/components/AppointmentList'
 import { Nav } from '@/components/Nav'
@@ -32,9 +32,17 @@ export function CalendarPage() {
   const [editing, setEditing] = useState<AppointmentResponse | null>(null)
   /** The appointment awaiting delete confirmation. */
   const [pendingDelete, setPendingDelete] = useState<AppointmentResponse | null>(null)
-  /** True only while the send is in flight, so a double-click cannot send twice. */
+  /** Drives the button's disabled state and its label. */
   const [emailing, setEmailing] = useState(false)
   const [emailResult, setEmailResult] = useState<string | null>(null)
+
+  /**
+   * The actual re-entry guard. `disabled={emailing}` alone loses the race: setting
+   * state does not apply the attribute until React re-renders, and a fast
+   * double-click delivers its second event before that commit — which sent two
+   * emails. A ref is written synchronously, so the second click cannot get past it.
+   */
+  const sendingRef = useRef(false)
 
   /** One range call per displayed month — the same endpoint the agenda uses. */
   const loadMonth = useCallback(async (visibleMonth: Date) => {
@@ -114,10 +122,16 @@ export function CalendarPage() {
               {/* Sends whichever day is selected. Pressing it on arrival sends
                   today, because the calendar opens with today selected. */}
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
                 disabled={emailing}
                 onClick={async () => {
+                  // Synchronous, before any await — this is what actually stops a
+                  // second click, since `disabled` has not been applied yet.
+                  if (sendingRef.current) return
+                  sendingRef.current = true
+
                   setEmailing(true)
                   setEmailResult(null)
                   try {
@@ -128,6 +142,8 @@ export function CalendarPage() {
                       caught instanceof Error ? caught.message : 'The email could not be sent.',
                     )
                   } finally {
+                    // Released on settle, whether the send succeeded or failed.
+                    sendingRef.current = false
                     setEmailing(false)
                   }
                 }}

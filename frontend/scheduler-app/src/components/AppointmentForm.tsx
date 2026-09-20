@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import {
@@ -43,6 +43,12 @@ export function AppointmentForm({
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
+  /**
+   * Same re-entry guard as the email button: `disabled={busy}` is applied only on
+   * the next render, so a fast double-submit would otherwise save twice.
+   */
+  const savingRef = useRef(false)
+
   // Refill whenever the dialog opens, so a cancelled edit never leaks into the next one.
   useEffect(() => {
     if (!open) return
@@ -66,6 +72,10 @@ export function AppointmentForm({
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
+
+    // Synchronous, before any await.
+    if (savingRef.current) return
+
     setError(null)
 
     // Fast feedback only. The server enforces these rules again and its answer wins.
@@ -86,6 +96,7 @@ export function AppointmentForm({
       endTime: toServerTime(endTime),
     }
 
+    savingRef.current = true
     setBusy(true)
     try {
       if (appointment) {
@@ -99,6 +110,7 @@ export function AppointmentForm({
       // Whatever the server said, verbatim.
       setError(caught instanceof Error ? caught.message : 'Could not save the appointment.')
     } finally {
+      savingRef.current = false
       setBusy(false)
     }
   }
