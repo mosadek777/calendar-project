@@ -203,11 +203,17 @@ and **before** verification, so the checklist in T-80 is walked against the fini
 lands before the email button (T-76) is built. Placed after T-77 instead, which is what "once
 all screens exist" requires. Move it back if the literal position was intended.
 
-- [ ] T-78 [DESIGN] One visual pass across **every** screen — sign-in, sign-up, agenda,
-  calendar with its day panel, the appointment dialog, and the delete confirmation. **Templates
-  and Tailwind classes only**: no changes to handlers, state, fetches, routing, validation, or
-  any other logic. Skip the screens that were dropped. Nothing outside JSX markup and
-  `className` values may change in this task, and `git diff` should show no altered behaviour.
+- [ ] T-78 [DESIGN] One visual pass across **every** screen — sign-in, sign-up, calendar with
+  its day panel, the appointment dialog, and the delete confirmation. (The agenda screen is
+  not in this list: US-13 was dropped.) Scope is **templates, Tailwind classes, design tokens,
+  icons and bounded motion — no logic changes**.
+  **Permitted**: JSX markup, `className` values, the CSS custom properties in `index.css`, a
+  Google Font `<link>` in `index.html`, `lucide-react` icons, and `framer-motion` for page
+  transitions and list-item enter/exit **only** — the three allowances of Article VII as
+  amended in constitution 1.1.0.
+  **Forbidden**: handlers, state, fetches, routing, validation, or any other behaviour; any
+  motion outside those two cases; any other icon set, UI kit, or CSS framework. `git diff`
+  must show no altered behaviour.
 
 ---
 

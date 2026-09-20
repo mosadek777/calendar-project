@@ -1,6 +1,15 @@
 <!--
 SYNC IMPACT REPORT (scratch — for review of this amendment)
-Version change: 1.0.0 → 1.0.1
+Version change: 1.0.1 → 1.1.0
+Bump rationale: MINOR — Article VII is materially expanded by three bounded allowances
+  (lucide-react, one Google Font pairing via <link>, framer-motion for page transitions and
+  list-item enter/exit only). No article is removed, reversed, or weakened; every surrounding
+  prohibition stands.
+Modified principles: Article VII (three allowances added), Technology & Configuration
+  Constraints (frontend dependency list)
+Added sections: none
+
+Prior report — version change: 1.0.0 → 1.0.1
 Bump rationale: PATCH — substituting the named development mail catcher (MailHog → MailDev)
   is a clarification of an existing article, not a change of governance. The email decision
   (interface-backed SMTP, button-triggered, config-only provider swap) is untouched.
@@ -96,6 +105,22 @@ in a panel beside or below it. Hand-building a month grid is FORBIDDEN, and Full
 any other events-calendar library is FORBIDDEN. TypeScript is used throughout, with API
 request and response shapes typed to match the contracts.
 
+**Three bounded allowances**, added in 1.1.0, and nothing beyond them:
+
+1. **Icons** — `lucide-react` only, which shadcn/ui's own components already depend on. No
+   other icon set, and no icon font.
+2. **Typeface** — one Google Font pairing, loaded with a `<link>` in `index.html`. No new npm
+   font package may be added; the `@fontsource-variable/geist` package that shadcn/ui's own
+   init installed may stay, or be removed in favour of the pairing.
+3. **Motion** — `framer-motion`, used ONLY for page transitions and for list-item enter and
+   exit. Any other use is a violation of this article. This allowance does not touch the CSS
+   transitions that ship inside shadcn/ui's own components, which were never animation added
+   by this project.
+
+Everything else in this article stands unchanged: no component library, no UI kit, no CSS
+framework besides Tailwind, no state management library, and no animation outside the two
+cases named above.
+
 ### VIII. Email by Button, Never by Scheduler
 
 Email is sent through an `IEmailSender` interface with a single SMTP implementation. In
@@ -120,7 +145,8 @@ than debated. "We might want it later" is not a reason to build it today.
 ## Technology & Configuration Constraints
 
 - **Frontend**: React + Vite + TypeScript, Tailwind CSS, shadcn/ui, react-day-picker (via the
-  shadcn `Calendar` component).
+  shadcn `Calendar` component), `lucide-react` for icons, and `framer-motion` for the two
+  motion cases Article VII allows.
 - **Backend**: ASP.NET Core Web API, EF Core, SQL Server LocalDB, JWT bearer authentication,
   `PasswordHasher<User>` from ASP.NET Core Identity.
 - **Domain (fixed)**: `User(Id, Email, PasswordHash, CreatedAt)`;
@@ -178,10 +204,16 @@ article here, the article wins.
 
 ### Amendment log
 
+- **1.1.0 (2026-09-20)** — Article VII gains three bounded allowances: `lucide-react` for
+  icons, one Google Font pairing loaded by `<link>`, and `framer-motion` restricted to page
+  transitions and list-item enter/exit. Reason: the visual pass needs icons, a typeface with
+  character, and restrained motion; without them T-78 can only reshuffle default greys.
+  Nothing is reversed, so the bump is MINOR. The `@fontsource-variable/geist` package that
+  shadcn/ui's init installed is kept, so no font change is required by this amendment.
 - **1.0.1 (2026-09-16)** — Article VIII and the Technology section now name **MailDev** as the
   development mail catcher instead of MailHog, because MailHog is not available on winget and
   MailDev was installed instead. Both speak plain SMTP on port 1025, so the email decision
   itself is unchanged; only the tool's name, its web UI port (1080, not 8025), and its install
   command differ.
 
-**Version**: 1.0.1 | **Ratified**: 2026-09-16 | **Last Amended**: 2026-09-16
+**Version**: 1.1.0 | **Ratified**: 2026-09-16 | **Last Amended**: 2026-09-20
