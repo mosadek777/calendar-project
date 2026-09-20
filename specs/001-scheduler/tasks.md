@@ -86,10 +86,10 @@ Blocking: every story below needs these. Nothing here is story-specific.
 - [X] T-36 [US-06] Add `UpdateAsync(Guid userId, Guid id, AppointmentRequest req)` — fetch with `FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId)`, `null` → **404**, apply the same validation, leave `CreatedAt` untouched
 - [X] T-37 [US-07] Add `DeleteAsync(Guid userId, Guid id)` — same owner-scoped fetch, `null` → **404**, then `Remove` and save. A real row delete; no soft-delete column exists
 - [X] T-38 [US-05] Add the `POST` (201), `PUT` (200) and `DELETE` (204) actions to `AppointmentsController.cs`, each thin and each passing the claim-derived `userId` first
-- [ ] T-39 [US-05] **Prove in Swagger**: create succeeds and returns an id; empty title → 400; title over 200 chars → 400; notes over 1000 → 400; end time equal to start → 400; `09:07:00` is accepted; a planted `userId` in the body changes nothing
-- [ ] T-40 [US-06] **Prove in Swagger**: edit a field; change the date and confirm the old day's range no longer returns it and the new day's does; confirm `CreatedAt` is unchanged
-- [ ] T-41 [US-07] **Prove in Swagger**: delete returns 204 and the appointment leaves the range; a second delete returns 404; confirm in the database the row is **gone**, not flagged
-- [ ] T-42 [US-03] **Prove ownership in Swagger with two accounts**: as A, `GET` never returns B's appointments; `PUT` and `DELETE` on B's id both return **404, not 403**; every appointment endpoint without a token returns 401
+- [X] T-39 [US-05] **Prove in Swagger**: create succeeds and returns an id; empty title → 400; title over 200 chars → 400; notes over 1000 → 400; end time equal to start → 400; `09:07:00` is accepted; a planted `userId` in the body changes nothing
+- [X] T-40 [US-06] **Prove in Swagger**: edit a field; change the date and confirm the old day's range no longer returns it and the new day's does; confirm `CreatedAt` is unchanged
+- [X] T-41 [US-07] **Prove in Swagger**: delete returns 204 and the appointment leaves the range; a second delete returns 404; confirm in the database the row is **gone**, not flagged
+- [X] T-42 [US-03] **Prove ownership in Swagger with two accounts**: as A, `GET` never returns B's appointments; `PUT` and `DELETE` on B's id both return **404, not 403**; every appointment endpoint without a token returns 401
 
 > ### ✅ CHECKPOINT — the backend is complete and demonstrable in Swagger alone.
 > If it is past mid-afternoon here, **drop Phases 9 and 10 now** and spend the remaining time on
@@ -107,7 +107,7 @@ Blocking: every story below needs these. Nothing here is story-specific.
 - [X] T-48 [US-09] Create `frontend\scheduler-app\src\context\AuthContext.tsx` — holds `{ token, email, signIn, signUp, signOut }`, hydrates from `localStorage` on mount. **React Context only**, no state library
 - [X] T-49 [US-09] Create `frontend\scheduler-app\src\components\ProtectedRoute.tsx` and wire `react-router-dom` in `src\App.tsx`: `/login` and `/register` open; `/` and `/calendar` guarded
 - [X] T-50 [US-09] [P] Create `frontend\scheduler-app\src\pages\Login.tsx` and `Register.tsx` using shadcn `card`, `input`, `label`, `button`, showing the server's refusal inline on the form. **Changed after T-57**: both now redirect to `/calendar`, not `/`, because the landing route is still a placeholder. This is exactly the fallback the plan specifies for a dropped US-13 — **T-68 must reverse it** if the agenda screen is built
-- [ ] T-51 [US-09] **Prove in the browser**: register → land; reload → still signed in; sign out → back to `/login`; type `/calendar` while signed out → bounced to `/login`; wrong password → inline generic message
+- [X] T-51 [US-09] **Prove in the browser**: register → land; reload → still signed in; sign out → back to `/login`; type `/calendar` while signed out → bounced to `/login`; wrong password → inline generic message
 
 ---
 
@@ -128,16 +128,16 @@ Blocking: every story below needs these. Nothing here is story-specific.
 - [X] T-59 [US-11] **The time-format gotcha**: `<input type="time">` yields `"09:00"`, which will **not** bind to a `TimeOnly` and returns a 400 that looks like nothing is wrong. Add a helper in `frontend\scheduler-app\src\lib\api.ts` that appends `":00"` on the way out and trims the seconds on the way in. Do this **before** the first create attempt, not after debugging one
 - [X] T-60 [US-11] Wire submit to `POST /api/appointments`, then refetch the month so the new appointment appears in the day's list and its day becomes marked, **without a page reload**
 - [X] T-61 [US-11] Surface server refusals on the form — the server's message wins whenever it disagrees with the client-side check
-- [ ] T-62 [US-11] **Prove in the browser**: add to an empty day → appears and the day becomes marked; empty title → message; end ≤ start → message; `09:07` accepted; empty notes fine
+- [X] T-62 [US-11] **Prove in the browser**: add to an empty day → appears and the day becomes marked; empty title → message; end ≤ start → message; `09:07` accepted; empty notes fine
 
 ---
 
 ## Phase 8 — Edit and delete (US-12)
 
-- [ ] T-63 [US-12] Add edit mode to `AppointmentForm.tsx` — pre-filled from the passed appointment, submitting to `PUT`. One form, two modes
-- [ ] T-64 [US-12] Add edit and delete controls to `AppointmentList.tsx`, with delete opening a shadcn `alert-dialog` for confirmation. **No undo, no restore** — clarification Q3
-- [ ] T-65 [US-12] Refresh the month after edit or delete so both affected days' marks update, including removing the mark from a day that lost its last appointment
-- [ ] T-66 [US-12] **Prove in the browser**: edit title and times; move to another date and watch both marks change; cancel a delete → nothing happens; confirm a delete → gone and the mark clears
+- [X] T-63 [US-12] Add edit mode to `AppointmentForm.tsx` — pre-filled from the passed appointment, submitting to `PUT`. One form, two modes
+- [X] T-64 [US-12] Add edit and delete controls to `AppointmentList.tsx`, with delete opening a shadcn `alert-dialog` for confirmation. **No undo, no restore** — clarification Q3
+- [X] T-65 [US-12] Refresh the month after edit or delete so both affected days' marks update, including removing the mark from a day that lost its last appointment
+- [X] T-66 [US-12] **Prove in the browser**: edit title and times; move to another date and watch both marks change; cancel a delete → nothing happens; confirm a delete → gone and the mark clears
 
 > ### ✅ CHECKPOINT — this is a complete scheduler and the sensible place to stop.
 > Everything below is additive. Neither remaining phase is depended on by anything above.
