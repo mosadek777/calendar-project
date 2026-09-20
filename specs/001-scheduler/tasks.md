@@ -20,15 +20,15 @@ point you reach when the day ends is dropped**, and what exists still works.
 No story label: this is the ground everything stands on.
 
 - [ ] T-01 [SETUP] Verify MailDev is listening — `Test-NetConnection -ComputerName localhost -Port 1025` returns `TcpTestSucceeded: True`, and <http://localhost:1080> opens. If not, restart `maildev` before going further
-- [ ] T-02 [SETUP] Verify LocalDB is running — `sqllocaldb info MSSQLLocalDB`; start it with `sqllocaldb start MSSQLLocalDB` if stopped
-- [ ] T-03 [SETUP] Create the API project: `dotnet new webapi --use-controllers -n Scheduler.Api -o backend\Scheduler.Api`. **No solution file** — one project does not need one, and Article III allows nothing in the repo root. **`--use-controllers` is not optional**: without it .NET 8 scaffolds a minimal-API project with no `Controllers\` folder, no `AddControllers()` and no `MapControllers()`, and every controller task below would have to be retrofitted
-- [ ] T-04 [SETUP] Add packages to `backend\Scheduler.Api\Scheduler.Api.csproj`: `Microsoft.AspNetCore.Authentication.JwtBearer`, `Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Design`, `Microsoft.Extensions.Identity.Core`, `Swashbuckle.AspNetCore`
-- [ ] T-05 [SETUP] Create exactly these folders under `backend\Scheduler.Api\`: `Controllers\`, `Services\`, `Data\`, `Models\`, `DTOs\`. No others — Article III
-- [ ] T-06 [SETUP] Write `backend\Scheduler.Api\appsettings.json` with **non-secret** `Jwt` (issuer, audience, 480-minute lifetime) and `Smtp` (FromAddress, FromName) keys only
-- [ ] T-07 [SETUP] Write `backend\Scheduler.Api\appsettings.Development.json` with the LocalDB connection string, a `Jwt:Key` of **at least 32 characters**, and `Smtp` host `localhost`, port `1025`, `EnableSsl: false`, empty `UserName`/`Password`. Confirm `git status` does **not** list this file — Article VI
-- [ ] T-08 [SETUP] [P] Create `backend\Scheduler.Api\DTOs\JwtOptions.cs` and `backend\Scheduler.Api\DTOs\SmtpOptions.cs` — directly in `DTOs\`, **not** in a subfolder, since Article III names the five permitted folders and these need no extra nesting — and bind both in `Program.cs` with `builder.Services.Configure<T>(builder.Configuration.GetSection("..."))`
-- [ ] T-09 [SETUP] Add a named CORS policy for `http://localhost:5173` in `backend\Scheduler.Api\Program.cs` **now**, not when it first blocks a request
-- [ ] T-10 [SETUP] Configure Swagger in `Program.cs` with a Bearer security definition, so the **Authorize** button exists for every later proof task
+- [X] T-02 [SETUP] Verify LocalDB is running — `sqllocaldb info MSSQLLocalDB`; start it with `sqllocaldb start MSSQLLocalDB` if stopped
+- [X] T-03 [SETUP] Create the API project: `dotnet new webapi --use-controllers -n Scheduler.Api -o backend\Scheduler.Api`. **No solution file** — one project does not need one, and Article III allows nothing in the repo root. **`--use-controllers` is not optional**: without it .NET 8 scaffolds a minimal-API project with no `Controllers\` folder, no `AddControllers()` and no `MapControllers()`, and every controller task below would have to be retrofitted
+- [X] T-04 [SETUP] Add packages to `backend\Scheduler.Api\Scheduler.Api.csproj`: `Microsoft.AspNetCore.Authentication.JwtBearer`, `Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Design`, `Microsoft.Extensions.Identity.Core`, `Swashbuckle.AspNetCore`
+- [X] T-05 [SETUP] Create exactly these folders under `backend\Scheduler.Api\`: `Controllers\`, `Services\`, `Data\`, `Models\`, `DTOs\`. No others — Article III
+- [X] T-06 [SETUP] Write `backend\Scheduler.Api\appsettings.json` with **non-secret** `Jwt` (issuer, audience, 480-minute lifetime) and `Smtp` (FromAddress, FromName) keys only
+- [X] T-07 [SETUP] Write `backend\Scheduler.Api\appsettings.Development.json` with the LocalDB connection string, a `Jwt:Key` of **at least 32 characters**, and `Smtp` host `localhost`, port `1025`, `EnableSsl: false`, empty `UserName`/`Password`. Confirm `git status` does **not** list this file — Article VI
+- [X] T-08 [SETUP] [P] Create `backend\Scheduler.Api\DTOs\JwtOptions.cs` and `backend\Scheduler.Api\DTOs\SmtpOptions.cs` — directly in `DTOs\`, **not** in a subfolder, since Article III names the five permitted folders and these need no extra nesting — and bind both in `Program.cs` with `builder.Services.Configure<T>(builder.Configuration.GetSection("..."))`
+- [X] T-09 [SETUP] Add a named CORS policy for `http://localhost:5173` in `backend\Scheduler.Api\Program.cs` **now**, not when it first blocks a request
+- [X] T-10 [SETUP] Configure Swagger in `Program.cs` with a Bearer security definition, so the **Authorize** button exists for every later proof task
 
 ---
 
@@ -36,11 +36,11 @@ No story label: this is the ground everything stands on.
 
 Blocking: every story below needs these. Nothing here is story-specific.
 
-- [ ] T-11 [SETUP] [P] Create `backend\Scheduler.Api\Models\User.cs` — `Id` (Guid, PK), `Email` (string, required, max 256), `PasswordHash` (string, required), `CreatedAt` (DateTime), navigation `ICollection<Appointment> Appointments`
-- [ ] T-12 [SETUP] [P] Create `backend\Scheduler.Api\Models\Appointment.cs` — `Id` (Guid, PK), `UserId` (Guid, required FK), `Title` (string, required, **max 200**), `Notes` (string?, **max 1000**), `Date` (**DateOnly**), `StartTime` (**TimeOnly**), `EndTime` (**TimeOnly**), `CreatedAt` (DateTime), navigation `User User`
-- [ ] T-13 [SETUP] Create `backend\Scheduler.Api\Data\SchedulerDbContext.cs` with `DbSet<User>` and `DbSet<Appointment>`, and in `OnModelCreating` declare: **unique index on `User.Email`**, index on `Appointment.UserId`, index on `(UserId, Date)`, and a required FK with cascade delete
-- [ ] T-14 [SETUP] Register the context in `Program.cs` with `AddDbContext<SchedulerDbContext>(o => o.UseSqlServer(...))` reading the connection string from configuration
-- [ ] T-15 [SETUP] Create and apply the migration: `dotnet ef migrations add InitialCreate` then `dotnet ef database update`, run from `backend\Scheduler.Api\`. Confirm both tables and all three indexes exist
+- [X] T-11 [SETUP] [P] Create `backend\Scheduler.Api\Models\User.cs` — `Id` (Guid, PK), `Email` (string, required, max 256), `PasswordHash` (string, required), `CreatedAt` (DateTime), navigation `ICollection<Appointment> Appointments`
+- [X] T-12 [SETUP] [P] Create `backend\Scheduler.Api\Models\Appointment.cs` — `Id` (Guid, PK), `UserId` (Guid, required FK), `Title` (string, required, **max 200**), `Notes` (string?, **max 1000**), `Date` (**DateOnly**), `StartTime` (**TimeOnly**), `EndTime` (**TimeOnly**), `CreatedAt` (DateTime), navigation `User User`
+- [X] T-13 [SETUP] Create `backend\Scheduler.Api\Data\SchedulerDbContext.cs` with `DbSet<User>` and `DbSet<Appointment>`, and in `OnModelCreating` declare: **unique index on `User.Email`**, index on `Appointment.UserId`, index on `(UserId, Date)`, and a required FK with cascade delete
+- [X] T-14 [SETUP] Register the context in `Program.cs` with `AddDbContext<SchedulerDbContext>(o => o.UseSqlServer(...))` reading the connection string from configuration
+- [X] T-15 [SETUP] Create and apply the migration: `dotnet ef migrations add InitialCreate` then `dotnet ef database update`, run from `backend\Scheduler.Api\`. Confirm both tables and all three indexes exist
 
 ---
 
@@ -49,18 +49,18 @@ Blocking: every story below needs these. Nothing here is story-specific.
 **Goal**: register, sign in, and make every later endpoint refuse strangers.
 **Independently testable**: entirely in Swagger, with no frontend in existence.
 
-- [ ] T-16 [US-01] [P] Create `backend\Scheduler.Api\DTOs\RegisterRequest.cs` — `Email` `[Required][EmailAddress][MaxLength(256)]`, `Password` `[Required][MinLength(8)]`
-- [ ] T-17 [US-02] [P] Create `backend\Scheduler.Api\DTOs\LoginRequest.cs` — `Email` `[Required][EmailAddress]`, `Password` `[Required]`. **Do not** add `[MinLength(8)]` here: at login it would leak that a short password was never valid
-- [ ] T-18 [US-01] [P] Create `backend\Scheduler.Api\DTOs\AuthResponse.cs` — `Token` and `Email` only. No `PasswordHash`, ever
-- [ ] T-19 [US-02] Create `backend\Scheduler.Api\Services\ITokenService.cs` and `TokenService.cs` — build a JWT from a `User`: claims `JwtRegisteredClaimNames.Sub` = `Id` and `email`, expiry **now + 8 hours**, signed HS256 with `IOptions<JwtOptions>.Value.Key`. Call `JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear()` first so the claim is written literally as `sub` and is not silently renamed
-- [ ] T-20 [US-01] Create `backend\Scheduler.Api\Services\IAuthService.cs` and `AuthService.cs` with `RegisterAsync` — lower-case the email, refuse a duplicate as a 409-shaped result, hash with `PasswordHasher<User>.HashPassword`, `await SaveChangesAsync()`, return a token
-- [ ] T-21 [US-02] Add `LoginAsync` to `AuthService.cs` — look up by lower-cased email, verify with `VerifyHashedPassword` (**never** `==`), and return **one identical generic failure** for both unknown email and wrong password
-- [ ] T-22 [US-01] Create `backend\Scheduler.Api\Controllers\AuthController.cs` — thin `POST register` (201) and `POST login` (200), both **without** `[Authorize]`, each calling exactly one service method
-- [ ] T-23 [US-03] Add JWT bearer authentication in `Program.cs` — `ValidateIssuer`, `ValidateAudience`, `ValidateLifetime`, `ValidateIssuerSigningKey` all `true`, and **`ClockSkew = TimeSpan.Zero`** so 8 hours means 8 hours. Call `JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear()` **before** configuring the scheme, so `sub` arrives as `sub` rather than being remapped to `ClaimTypes.NameIdentifier`. Add `UseAuthentication()` before `UseAuthorization()`
-- [ ] T-24 [US-03] Add a small helper in `backend\Scheduler.Api\Controllers\` that reads `User.FindFirstValue("sub")` as a `Guid`, for controllers to pass into services. **Read the same literal name T-19 writes** — relying on .NET's default claim-type mapping is what makes this silently return `null` when someone clears the map
-- [ ] T-25 [US-01] Register `IAuthService`, `ITokenService`, and `PasswordHasher<User>` in `Program.cs` DI
-- [ ] T-26 [US-01] **Prove in Swagger**: register succeeds; the same email a second time returns 409; a malformed email and a 7-character password each return 400. Then query the `Users` table and confirm `PasswordHash` contains no readable password
-- [ ] T-27 [US-02] **Prove in Swagger**: login returns a token; paste it into <https://jwt.io> and confirm the `sub` claim and an `exp` 8 hours out; confirm wrong password and unknown email return **identical** bodies and status
+- [X] T-16 [US-01] [P] Create `backend\Scheduler.Api\DTOs\RegisterRequest.cs` — `Email` `[Required][EmailAddress][MaxLength(256)]`, `Password` `[Required][MinLength(8)]`
+- [X] T-17 [US-02] [P] Create `backend\Scheduler.Api\DTOs\LoginRequest.cs` — `Email` `[Required][EmailAddress]`, `Password` `[Required]`. **Do not** add `[MinLength(8)]` here: at login it would leak that a short password was never valid
+- [X] T-18 [US-01] [P] Create `backend\Scheduler.Api\DTOs\AuthResponse.cs` — `Token` and `Email` only. No `PasswordHash`, ever
+- [X] T-19 [US-02] Create `backend\Scheduler.Api\Services\ITokenService.cs` and `TokenService.cs` — build a JWT from a `User`: claims `JwtRegisteredClaimNames.Sub` = `Id` and `email`, expiry **now + 8 hours**, signed HS256 with `IOptions<JwtOptions>.Value.Key`. Call `JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear()` first so the claim is written literally as `sub` and is not silently renamed
+- [X] T-20 [US-01] Create `backend\Scheduler.Api\Services\IAuthService.cs` and `AuthService.cs` with `RegisterAsync` — lower-case the email, refuse a duplicate as a 409-shaped result, hash with `PasswordHasher<User>.HashPassword`, `await SaveChangesAsync()`, return a token
+- [X] T-21 [US-02] Add `LoginAsync` to `AuthService.cs` — look up by lower-cased email, verify with `VerifyHashedPassword` (**never** `==`), and return **one identical generic failure** for both unknown email and wrong password
+- [X] T-22 [US-01] Create `backend\Scheduler.Api\Controllers\AuthController.cs` — thin `POST register` (201) and `POST login` (200), both **without** `[Authorize]`, each calling exactly one service method
+- [X] T-23 [US-03] Add JWT bearer authentication in `Program.cs` — `ValidateIssuer`, `ValidateAudience`, `ValidateLifetime`, `ValidateIssuerSigningKey` all `true`, and **`ClockSkew = TimeSpan.Zero`** so 8 hours means 8 hours. Call `JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear()` **before** configuring the scheme, so `sub` arrives as `sub` rather than being remapped to `ClaimTypes.NameIdentifier`. Add `UseAuthentication()` before `UseAuthorization()`
+- [X] T-24 [US-03] Add a small helper in `backend\Scheduler.Api\Controllers\` that reads `User.FindFirstValue("sub")` as a `Guid`, for controllers to pass into services. **Read the same literal name T-19 writes** — relying on .NET's default claim-type mapping is what makes this silently return `null` when someone clears the map
+- [X] T-25 [US-01] Register `IAuthService`, `ITokenService`, and `PasswordHasher<User>` in `Program.cs` DI
+- [X] T-26 [US-01] **Prove in Swagger**: register succeeds; the same email a second time returns 409; a malformed email and a 7-character password each return 400. Then query the `Users` table and confirm `PasswordHash` contains no readable password
+- [X] T-27 [US-02] **Prove in Swagger**: login returns a token; paste it into <https://jwt.io> and confirm the `sub` claim and an `exp` 8 hours out; confirm wrong password and unknown email return **identical** bodies and status
 
 ---
 

@@ -29,7 +29,12 @@ exists still works.
 
 ## Technical Context
 
-**Language/Version**: C# 12 on .NET 8 (LTS); TypeScript 5 on Node 20+
+**Language/Version**: C# on **.NET 9** (`net9.0`); TypeScript 5 on Node 20+
+
+> Corrected during Phase 7. This plan originally said .NET 8 (LTS), but the machine has only
+> SDKs 9.0.318 and 10.0.401 and no `Microsoft.AspNetCore.App 8.x` runtime. `net9.0` was chosen
+> over `net10.0` because Swashbuckle — which every Swagger proof task depends on — is solidly
+> supported there.
 
 **Primary Dependencies**:
 - Backend: `Microsoft.AspNetCore.Authentication.JwtBearer`,
@@ -267,6 +272,24 @@ US-11's tasks so it is not discovered at 5pm.
 The `AuthContext` reads it once on mount and writes it on sign-in. **Rejected**: an httpOnly
 cookie — better against XSS, but it needs CORS credentials, a cookie policy, and antiforgery
 consideration. Not today, for a local app that is never deployed.
+
+### D7 — Swashbuckle pinned to 7.2.0, Microsoft.OpenApi pinned to 1.6.22
+
+Both pins were forced during Phase 7 and both are about Swagger, not the API.
+
+- **Swashbuckle 7.2.0, not 10.x.** `dotnet add package` resolved 10.2.3, which ships
+  OpenAPI.NET v2: `OpenApiInfo` and friends left `Microsoft.OpenApi.Models` and the security
+  scheme reference API changed shape, breaking the build. 7.2.0 builds clean against the
+  familiar v1 API. **Rejected**: rewriting the Swagger configuration against the v2 API today.
+- **Microsoft.OpenApi 1.6.22, not 1.6.30.** 1.6.23+ writes `"openapi": "3.0.4"`, a patch
+  version the Swagger UI bundled with 7.2.0 does not recognise — the document is valid and all
+  paths generate correctly, but the UI refuses to render it. 1.6.22 writes `"openapi":
+  "3.0.1"`. Verified by serializing a probe document under each version rather than by
+  guessing.
+- **`Microsoft.AspNetCore.OpenApi` removed.** It is .NET 9's built-in OpenAPI generator, left
+  over from the project template and never called — no `AddOpenApi`, no `MapOpenApi`. It was
+  the only thing requiring `Microsoft.OpenApi >= 1.6.30`, so deleting the unused package is
+  what allows the pin.
 
 ### D6 — No global error/toast system
 
