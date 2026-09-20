@@ -114,7 +114,7 @@ public class AppointmentService : IAppointmentService
         return AppointmentStatus.Success;
     }
 
-    public async Task<EmailResultResponse> EmailTodayAsync(Guid userId)
+    public async Task<EmailResultResponse> EmailDayAsync(Guid userId, DateOnly date)
     {
         var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
@@ -122,30 +122,26 @@ public class AppointmentService : IAppointmentService
             return new EmailResultResponse(false, "We could not find your account.");
         }
 
-        // Local, not UTC: the spec fixes all dates and times to the machine's own
-        // clock and puts timezones out of scope.
-        var today = DateOnly.FromDateTime(DateTime.Now);
-
         var appointments = await _db.Appointments
             .AsNoTracking()
-            .Where(a => a.UserId == userId && a.Date == today)
+            .Where(a => a.UserId == userId && a.Date == date)
             .OrderBy(a => a.StartTime)
             .ToListAsync();
 
-        var subject = $"Your schedule for {today.ToDateTime(TimeOnly.MinValue).ToString("dddd, d MMMM yyyy", CultureInfo.CurrentCulture)}";
-        var body = BuildPlainTextBody(today, appointments);
+        var subject = $"Your schedule for {FormatDay(date)}";
+        var body = BuildPlainTextBody(date, appointments);
 
         try
         {
             // The recipient comes from the account, never from the request.
             await _email.SendAsync(user.Email, subject, body);
-            return new EmailResultResponse(true, $"Today's schedule was sent to {user.Email}.");
+            return new EmailResultResponse(true, $"The schedule for {FormatDay(date)} was sent to {user.Email}.");
         }
         catch (Exception ex)
         {
             // A send failure changes no appointment data, and is not a 500 — the
             // request was valid and nothing broke.
-            _logger.LogWarning(ex, "Sending today's schedule failed.");
+            _logger.LogWarning(ex, "Sending the schedule for {Date} failed.", date);
             return new EmailResultResponse(false, "The email could not be sent. Your appointments are unchanged.");
         }
     }
@@ -156,13 +152,17 @@ public class AppointmentService : IAppointmentService
     /// </summary>
     private static string BuildPlainTextBody(DateOnly day, IReadOnlyList<Appointment> appointments)
     {
+        // Local, not UTC: the spec fixes all dates to the machine's own clock.
+        var isToday = day == DateOnly.FromDateTime(DateTime.Now);
+
         var builder = new StringBuilder();
-        builder.AppendLine(day.ToDateTime(TimeOnly.MinValue).ToString("dddd, d MMMM yyyy", CultureInfo.CurrentCulture));
+        builder.AppendLine(FormatDay(day));
         builder.AppendLine();
 
         if (appointments.Count == 0)
         {
-            builder.AppendLine("Nothing scheduled today.");
+            // An email still goes out on an empty day (FR-025).
+            builder.AppendLine(isToday ? "Nothing scheduled today." : "Nothing scheduled on this day.");
             return builder.ToString();
         }
 
@@ -178,6 +178,9 @@ public class AppointmentService : IAppointmentService
 
         return builder.ToString();
     }
+
+    private static string FormatDay(DateOnly day) =>
+        day.ToDateTime(TimeOnly.MinValue).ToString("dddd, d MMMM yyyy", CultureInfo.CurrentCulture);
 
     private static bool HasValidTimes(AppointmentRequest request) => request.EndTime > request.StartTime;
 

@@ -28,3 +28,8 @@ export interface AppointmentRequest {
   /** HH:mm:ss */
   endTime: string
 }
+
+export interface EmailResult {
+  sent: boolean
+  message: string
+}

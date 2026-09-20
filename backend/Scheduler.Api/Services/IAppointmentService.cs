@@ -33,9 +33,10 @@ public interface IAppointmentService
     Task<AppointmentStatus> DeleteAsync(Guid userId, Guid id);
 
     /// <summary>
-    /// Sends today's schedule to the address on the caller's account. Runs only
-    /// because a person pressed a button — there is no timer, hosted service, or
-    /// queue anywhere in this solution (Article VIII).
+    /// Sends one day's schedule to the address on the caller's account. The day is
+    /// whichever one the person has selected, which is today when the calendar first
+    /// opens. Runs only because a person pressed a button — there is no timer, hosted
+    /// service, or queue anywhere in this solution (Article VIII).
     /// </summary>
-    Task<EmailResultResponse> EmailTodayAsync(Guid userId);
+    Task<EmailResultResponse> EmailDayAsync(Guid userId, DateOnly date);
 }

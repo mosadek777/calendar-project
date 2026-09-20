@@ -330,21 +330,27 @@ as satisfied-or-dropped, not as failures.*
   immediately after signing in.
 - **FR-022**: The system MUST state plainly on that screen when nothing is scheduled today.
 
-**Emailing today's schedule (P6)** — *conditional. This band is the first to be dropped if time
+**Emailing a day's schedule (P6)** — *conditional. This band is the first to be dropped if time
 runs out, and it is dropped whole: FR-023 through FR-026 stand or fall together, because an
 endpoint with no button, or a button with no endpoint, is worse than neither. If dropped, the
-person reads today's schedule on screen and loses no information.*
+person reads the schedule on screen and loses no information.*
+
+> **Widened during Phase 7**, from "today's schedule" to "the selected day's schedule". Once
+> US-13 was dropped, the calendar's day panel became the main view, so scoping the button to
+> the day already on screen is the coherent behaviour. Today remains the default, because the
+> calendar opens with today selected.
 
 - **FR-023**: The system MUST provide a clearly labelled control that, when pressed, sends the
-  signed-in person an email at their registered address containing today's appointments in
-  ascending start-time order.
+  signed-in person an email at their registered address containing **the selected day's**
+  appointments in ascending start-time order. Because the calendar opens with today selected,
+  pressing it on arrival sends today's schedule.
 - **FR-023a**: That email MUST be plain text — one line per appointment showing start time,
-  end time, and title, with any note beneath it — and MUST carry a subject line naming today's
-  date. The system MUST NOT send HTML, attachments, or calendar invitations.
+  end time, and title, with any note beneath it — and MUST carry a subject line naming **that
+  day's** date. The system MUST NOT send HTML, attachments, or calendar invitations.
 - **FR-024**: The system MUST send that email only in response to that control being pressed,
   and MUST NOT send email on any schedule, timer, or automatic trigger.
 - **FR-025**: The system MUST send an email stating that nothing is scheduled when the person
-  has no appointments today.
+  has no appointments on the selected day.
 - **FR-026**: The system MUST tell the person on screen whether the email was sent or failed,
   and MUST leave their appointments unchanged either way.
 

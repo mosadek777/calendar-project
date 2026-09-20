@@ -1,4 +1,4 @@
-import type { AppointmentRequest, AppointmentResponse, AuthResponse } from '@/lib/types'
+import type { AppointmentRequest, AppointmentResponse, AuthResponse, EmailResult } from '@/lib/types'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5233'
 
@@ -119,4 +119,8 @@ export const api = {
 
   remove: (id: string) =>
     request<void>(`/api/appointments/${id}`, { method: 'DELETE' }),
+
+  /** Sends the given day's schedule to the signed-in person's registered address. */
+  emailDay: (date: string) =>
+    request<EmailResult>(`/api/appointments/email-day?date=${date}`, { method: 'POST' }),
 }

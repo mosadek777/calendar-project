@@ -1,4 +1,9 @@
-# US-08 — Email me today's schedule
+# US-08 — Email me a day's schedule
+
+> **Widened during Phase 7** from "today" to "the selected day", after US-13 was dropped and the
+> calendar's day panel became the main view. Today is still what arrives when the button is
+> pressed on open, because the calendar opens with today selected. The endpoint is
+> `POST /api/appointments/email-day?date=`.
 
 **Layer**: Backend · **Priority band**: P6 (manual email) · **Cut position**: 6 of 6 — **this
 is the first thing dropped if the day runs out.**

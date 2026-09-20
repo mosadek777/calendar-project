@@ -1,4 +1,7 @@
-# US-14 — The "email me today's schedule" button
+# US-14 — The "email me this day's schedule" button
+
+> **Widened during Phase 7** from "today" to "the selected day" — see US-08. The button lives on
+> the calendar screen's day panel, beside Add, since US-13 was dropped.
 
 **Layer**: Frontend · **Priority band**: P6 (manual email) · **Cut position**: 6 of 6 — **the
 first thing dropped, together with backend US-08.**

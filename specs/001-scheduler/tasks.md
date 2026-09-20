@@ -19,7 +19,7 @@ point you reach when the day ends is dropped**, and what exists still works.
 
 No story label: this is the ground everything stands on.
 
-- [ ] T-01 [SETUP] Verify MailDev is listening — `Test-NetConnection -ComputerName localhost -Port 1025` returns `TcpTestSucceeded: True`, and <http://localhost:1080> opens. If not, restart `maildev` before going further
+- [X] T-01 [SETUP] Verify MailDev is listening — `Test-NetConnection -ComputerName localhost -Port 1025` returns `TcpTestSucceeded: True`, and <http://localhost:1080> opens. If not, restart `maildev` before going further
 - [X] T-02 [SETUP] Verify LocalDB is running — `sqllocaldb info MSSQLLocalDB`; start it with `sqllocaldb start MSSQLLocalDB` if stopped
 - [X] T-03 [SETUP] Create the API project: `dotnet new webapi --use-controllers -n Scheduler.Api -o backend\Scheduler.Api`. **No solution file** — one project does not need one, and Article III allows nothing in the repo root. **`--use-controllers` is not optional**: without it .NET 8 scaffolds a minimal-API project with no `Controllers\` folder, no `AddControllers()` and no `MapControllers()`, and every controller task below would have to be retrofitted
 - [X] T-04 [SETUP] Add packages to `backend\Scheduler.Api\Scheduler.Api.csproj`: `Microsoft.AspNetCore.Authentication.JwtBearer`, `Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Design`, `Microsoft.Extensions.Identity.Core`, `Swashbuckle.AspNetCore`
@@ -187,9 +187,9 @@ button with no endpoint — worse than neither. Drop the pair together.
 - [X] T-71 [US-08] Register `IEmailSender` in `Program.cs` DI
 - [X] T-72 [US-08] [P] Create `backend\Scheduler.Api\DTOs\EmailResultResponse.cs` — `Sent` (bool) and `Message` (string)
 - [X] T-73 [US-08] Add `EmailTodayAsync(Guid userId)` to `AppointmentService.cs` — today is `DateOnly.FromDateTime(DateTime.Now)` (local, per the spec); build **plain text** with subject `Your schedule for <long date>` and one line per appointment `09:30–10:15  Title`, notes indented beneath; an empty day still sends, saying so
-- [X] T-74 [US-08] Add `POST /api/appointments/email-today` to `AppointmentsController.cs` — no body, `[Authorize]`, recipient read from the **account**, never the request. Return `sent: false` with a message on SMTP failure rather than a 500
+- [X] T-74 [US-08] **Changed to `POST /api/appointments/email-day?date=`, scoped to the selected day** — add it to `AppointmentsController.cs` — no body, `[Authorize]`, recipient read from the **account**, never the request. Return `sent: false` with a message on SMTP failure rather than a 500
 - [ ] T-75 [US-08] **Prove with MailDev**: the message appears at <http://localhost:1080> with the right subject and ordering; the empty-day case arrives too; stopping `maildev` produces `sent: false` and leaves all appointments untouched
-- [ ] T-76 [US-14] Add the button to `frontend\scheduler-app\src\pages\Agenda.tsx` (or `CalendarPage.tsx` if US-13 was dropped), **disabled while the request is in flight** so a double-click cannot send two emails, showing success or failure inline
+- [X] T-76 [US-14] Add the button to `frontend\scheduler-app\src\pages\Agenda.tsx` (or `CalendarPage.tsx` if US-13 was dropped), **disabled while the request is in flight** so a double-click cannot send two emails, showing success or failure inline
 - [ ] T-77 [US-14] **Prove in the browser**: one press → one message in MailDev; a rapid double-click → still one; MailDev stopped → failure message, list unchanged; idle with the page open → zero messages
 
 ---

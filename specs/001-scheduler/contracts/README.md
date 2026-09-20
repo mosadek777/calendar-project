@@ -20,7 +20,7 @@
 | POST | `/api/appointments` | Bearer | US-05 |
 | PUT | `/api/appointments/{id}` | Bearer | US-06 |
 | DELETE | `/api/appointments/{id}` | Bearer | US-07 |
-| POST | `/api/appointments/email-today` | Bearer | US-08 |
+| POST | `/api/appointments/email-day?date=` | Bearer | US-08 |
 
 Six URLs, seven operations. Article IX keeps it there: no `/month`, no `/today`, no `/search`,
 no pagination parameters.

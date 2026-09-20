@@ -130,30 +130,41 @@ endpoint deletes when asked.
 
 ---
 
-## `POST /api/appointments/email-today` — US-08
+## `POST /api/appointments/email-day?date={date}` — US-08
 
-No request body. Sends today's schedule to the address on the caller's account.
+Sends **the selected day's** schedule to the address on the caller's account.
+
+> **Changed during Phase 7.** This was `POST /api/appointments/email-today` with no parameters.
+> Once US-13 was dropped, the calendar's day panel became the main view, so emailing an
+> arbitrary selected day is the coherent behaviour — and emailing *today* is still what happens
+> when the button is pressed on open, because the calendar opens with today selected.
+
+| Parameter | Type | Required |
+|---|---|---|
+| `date` | `YYYY-MM-DD` | yes |
 
 **200 OK** — `EmailResultResponse`
 
 ```json
-{ "sent": true, "message": "Today's schedule was sent to someone@example.com." }
+{ "sent": true, "message": "The schedule for Thursday, 24 September 2026 was sent to someone@example.com." }
 ```
 
 | Code | When |
 |---|---|
 | 200 | `sent: true` — accepted by the SMTP server |
 | 200 | `sent: false` with a message — SMTP unreachable. Deliberately **not** a 500: the request was valid and nothing broke |
+| 400 | `date` missing or unparseable |
 | 401 | No or expired token |
 
 **Behaviour**
 
-1. Today is `DateOnly.FromDateTime(DateTime.Now)` — local, per the spec's timezone stance.
-2. Load that day's appointments for `userId`, ordered by `startTime`.
-3. Build **plain text** (clarification Q5):
-   - Subject: `Your schedule for Wednesday, 16 September 2026`
+1. Load that date's appointments for `userId`, ordered by `startTime`.
+2. Build **plain text** (clarification Q5):
+   - Subject: `Your schedule for Thursday, 24 September 2026`
    - Body: one line per appointment — `09:30–10:15  Dentist` — with any note indented beneath.
-   - Empty day: a single line saying nothing is scheduled. An email still goes out (FR-025).
+   - Empty day: a single line saying nothing is scheduled — "Nothing scheduled today." when the
+     date is today, "Nothing scheduled on this day." otherwise. An email still goes out
+     (FR-025).
 4. Hand subject and body to `IEmailSender.SendAsync(to, subject, body)`. The recipient comes
    from the account, never from the request (US-08 AC-5).
 5. No appointment is created, changed, or deleted, whether the send succeeds or fails

@@ -32,6 +32,9 @@ export function CalendarPage() {
   const [editing, setEditing] = useState<AppointmentResponse | null>(null)
   /** The appointment awaiting delete confirmation. */
   const [pendingDelete, setPendingDelete] = useState<AppointmentResponse | null>(null)
+  /** True only while the send is in flight, so a double-click cannot send twice. */
+  const [emailing, setEmailing] = useState(false)
+  const [emailResult, setEmailResult] = useState<string | null>(null)
 
   /** One range call per displayed month — the same endpoint the agenda uses. */
   const loadMonth = useCallback(async (visibleMonth: Date) => {
@@ -87,7 +90,12 @@ export function CalendarPage() {
               key={busyKey}
               mode="single"
               selected={selected}
-              onSelect={(day) => day && setSelected(day)}
+              onSelect={(day) => {
+                if (!day) return
+                setSelected(day)
+                // A result from one day must not linger over another.
+                setEmailResult(null)
+              }}
               month={month}
               onMonthChange={setMonth}
               showOutsideDays={false}
@@ -102,15 +110,41 @@ export function CalendarPage() {
         <Card className="flex-1">
           <CardHeader className="flex flex-row items-center justify-between gap-3">
             <CardTitle className="text-base">{formatLongDate(selected)}</CardTitle>
-            <Button
-              size="sm"
-              onClick={() => {
-                setEditing(null)
-                setFormOpen(true)
-              }}
-            >
-              Add
-            </Button>
+            <div className="flex gap-2">
+              {/* Sends whichever day is selected. Pressing it on arrival sends
+                  today, because the calendar opens with today selected. */}
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={emailing}
+                onClick={async () => {
+                  setEmailing(true)
+                  setEmailResult(null)
+                  try {
+                    const result = await api.emailDay(selectedIso)
+                    setEmailResult(result.message)
+                  } catch (caught) {
+                    setEmailResult(
+                      caught instanceof Error ? caught.message : 'The email could not be sent.',
+                    )
+                  } finally {
+                    setEmailing(false)
+                  }
+                }}
+              >
+                {emailing ? 'Sending…' : 'Email this day'}
+              </Button>
+
+              <Button
+                size="sm"
+                onClick={() => {
+                  setEditing(null)
+                  setFormOpen(true)
+                }}
+              >
+                Add
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {error ? (
@@ -145,6 +179,12 @@ export function CalendarPage() {
                   </>
                 )}
               />
+            )}
+
+            {emailResult && (
+              <p role="status" className="text-muted-foreground mt-4 text-sm">
+                {emailResult}
+              </p>
             )}
           </CardContent>
         </Card>

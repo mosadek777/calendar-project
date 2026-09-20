@@ -82,14 +82,15 @@ public class AppointmentsController : ControllerBase
 
     /// <summary>
     /// The only thing in this solution that sends email, and it only ever runs
-    /// because a person pressed a button.
+    /// because a person pressed a button. The date is the day they have selected.
     /// </summary>
-    [HttpPost("email-today")]
+    [HttpPost("email-day")]
     [ProducesResponseType(typeof(EmailResultResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> EmailToday()
+    public async Task<IActionResult> EmailDay([FromQuery] DateOnly date)
     {
-        // No request body: the recipient is read from the caller's account.
-        return Ok(await _appointments.EmailTodayAsync(User.GetUserId()));
+        // The date says which day to send; the recipient still comes from the
+        // caller's account, never from the request.
+        return Ok(await _appointments.EmailDayAsync(User.GetUserId(), date));
     }
 
     private ObjectResult InvalidTimes() => Problem(
