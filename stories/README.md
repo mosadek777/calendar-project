@@ -32,7 +32,7 @@
 | [US-10](frontend/US-10-month-calendar-and-day-panel.md) | Month calendar with marked days and a day panel | P2 | 2 |
 | [US-11](frontend/US-11-create-appointment-form.md) | Create an appointment from the selected day | P3 | 3 |
 | [US-12](frontend/US-12-edit-and-delete-appointment.md) | Edit and delete an appointment | P4 | 4 |
-| [US-13](frontend/US-13-todays-agenda-screen.md) | Today's agenda as the landing screen | P5 | **5 — dropped second** |
+| [US-13](frontend/US-13-todays-agenda-screen.md) | Today's agenda as the landing screen | P5 | ❌ **DROPPED — not built** (redundant with the calendar's day panel; see plan.md) |
 | [US-14](frontend/US-14-email-schedule-button.md) | The "email me today's schedule" button | P6 | **6 — dropped first** |
 
 ---

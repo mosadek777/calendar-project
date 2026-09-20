@@ -430,7 +430,20 @@ still works.** This is the operational form of Article I.
 | 8 | US-13 | Agenda landing screen | Today's list on landing |
 | 9 | US-08 + US-14 | Email endpoint + button | The full feature set |
 
-### What gets dropped first, and exactly what that costs
+### What was actually dropped
+
+**US-13, the agenda screen, was cut.** Decided after step 7, with the scheduler complete.
+Not because time ran out — because the screen turned out to be redundant: the calendar opens
+with today selected and today's appointments already in its day panel. The post-sign-in
+redirect had been pointed at `/calendar` after step 5 for exactly that reason, and building
+the agenda would have reversed a decision that proved correct in use.
+
+FR-021 and FR-022 are knowingly unmet; the P5 band in `spec.md` is marked conditional for this
+case. Nothing needed removing, because nothing had been built. **US-08 and US-14, the email
+pair, were kept** — the reverse of the order below, which is fine: the drop order says which
+to cut *first when forced*, not which is least valuable.
+
+### The drop order as originally planned, and what each cut costs
 
 1. **US-08 + US-14 (email) — dropped first, together.** A button with no endpoint is worse than
    neither. Nothing depends on either. Cost: the person reads today's schedule on screen

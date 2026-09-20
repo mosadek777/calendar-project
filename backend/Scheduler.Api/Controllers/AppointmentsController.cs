@@ -80,6 +80,18 @@ public class AppointmentsController : ControllerBase
         return status == AppointmentStatus.Success ? NoContent() : NotFoundProblem();
     }
 
+    /// <summary>
+    /// The only thing in this solution that sends email, and it only ever runs
+    /// because a person pressed a button.
+    /// </summary>
+    [HttpPost("email-today")]
+    [ProducesResponseType(typeof(EmailResultResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> EmailToday()
+    {
+        // No request body: the recipient is read from the caller's account.
+        return Ok(await _appointments.EmailTodayAsync(User.GetUserId()));
+    }
+
     private ObjectResult InvalidTimes() => Problem(
         title: "Invalid times",
         detail: "End time must be after start time.",

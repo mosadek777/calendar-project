@@ -144,27 +144,50 @@ Blocking: every story below needs these. Nothing here is story-specific.
 
 ---
 
-## Phase 9 — Today's agenda screen (US-13) · **DROP #2**
+## Phase 9 — Today's agenda screen (US-13) · ❌ **DROPPED — not built**
 
-**If dropped**: change the post-sign-in redirect to `/calendar`, which already opens with today
-selected. One route deleted, one redirect target changed. Nothing in Phase 6 is touched.
+> **This story was deliberately cut, and the cut was taken.** Decided after T-66, once the
+> calendar screen was complete and demonstrable.
+>
+> **Why**: the calendar screen already opens with today selected and today's appointments in
+> its day panel, so a separate agenda screen duplicates it. The post-sign-in redirect had
+> already been pointed at `/calendar` after T-57 because the landing route was an empty
+> placeholder; building the agenda would have reversed a decision that turned out to be right.
+>
+> **What it cost**: FR-021 and FR-022 are knowingly unmet. No information is lost — the person
+> reads today's schedule on the calendar screen instead of a dedicated one. The P5 band in
+> `spec.md` is marked conditional precisely for this.
+>
+> **What was actually removed**: nothing, because nothing was built. The `/` route keeps its
+> placeholder and both auth pages continue to redirect to `/calendar`.
+>
+> **This is a deliberate cut, not a gap.** The three tasks below stay unchecked on purpose.
+
+- [ ] ~~T-67 [US-13] Create `frontend\scheduler-app\src\pages\Agenda.tsx`~~ — **DROPPED**
+- [ ] ~~T-68 [US-13] Point `/` at the agenda and land both auth pages there~~ — **DROPPED**
+- [ ] ~~T-69 [US-13] **Prove in the browser**~~ — **DROPPED**
+
+<details>
+<summary>Original task text, kept for the record</summary>
 
 - [ ] T-67 [US-13] Create `frontend\scheduler-app\src\pages\Agenda.tsx` — fetch today as a single-day range, render with the existing `AppointmentList`, and say plainly when nothing is scheduled
 - [ ] T-68 [US-13] Point `/` at the agenda and make both sign-in and sign-up land there. **This reverses the change made after T-57**, where both were redirected to `/calendar` because `/` was a placeholder — see the note on T-50. If US-13 is dropped, leave the redirect pointing at `/calendar` and delete the placeholder route instead
 - [ ] T-69 [US-13] **Prove in the browser**: sign in → today's appointments only, in time order; an empty today shows the message; nav reaches the calendar and back
 
+</details>
+
 ---
 
-## Phase 10 — Email today's schedule (US-08 + US-14) · **DROP #1**
+## Phase 10 — Email today's schedule (US-08 + US-14) · **DROP #1** — **kept, not dropped**
 
 **If dropped**: do not write them. Nothing depends on either, and dropping only one leaves a
 button with no endpoint — worse than neither. Drop the pair together.
 
-- [ ] T-70 [US-08] Create `backend\Scheduler.Api\Services\IEmailSender.cs` and `SmtpEmailSender.cs` using `System.Net.Mail.SmtpClient` driven entirely by `IOptions<SmtpOptions>`. Supply credentials **only when `UserName` is non-empty** — that single conditional is what makes MailDev and Gmail both work against unchanged code
-- [ ] T-71 [US-08] Register `IEmailSender` in `Program.cs` DI
-- [ ] T-72 [US-08] [P] Create `backend\Scheduler.Api\DTOs\EmailResultResponse.cs` — `Sent` (bool) and `Message` (string)
-- [ ] T-73 [US-08] Add `EmailTodayAsync(Guid userId)` to `AppointmentService.cs` — today is `DateOnly.FromDateTime(DateTime.Now)` (local, per the spec); build **plain text** with subject `Your schedule for <long date>` and one line per appointment `09:30–10:15  Title`, notes indented beneath; an empty day still sends, saying so
-- [ ] T-74 [US-08] Add `POST /api/appointments/email-today` to `AppointmentsController.cs` — no body, `[Authorize]`, recipient read from the **account**, never the request. Return `sent: false` with a message on SMTP failure rather than a 500
+- [X] T-70 [US-08] Create `backend\Scheduler.Api\Services\IEmailSender.cs` and `SmtpEmailSender.cs` using `System.Net.Mail.SmtpClient` driven entirely by `IOptions<SmtpOptions>`. Supply credentials **only when `UserName` is non-empty** — that single conditional is what makes MailDev and Gmail both work against unchanged code
+- [X] T-71 [US-08] Register `IEmailSender` in `Program.cs` DI
+- [X] T-72 [US-08] [P] Create `backend\Scheduler.Api\DTOs\EmailResultResponse.cs` — `Sent` (bool) and `Message` (string)
+- [X] T-73 [US-08] Add `EmailTodayAsync(Guid userId)` to `AppointmentService.cs` — today is `DateOnly.FromDateTime(DateTime.Now)` (local, per the spec); build **plain text** with subject `Your schedule for <long date>` and one line per appointment `09:30–10:15  Title`, notes indented beneath; an empty day still sends, saying so
+- [X] T-74 [US-08] Add `POST /api/appointments/email-today` to `AppointmentsController.cs` — no body, `[Authorize]`, recipient read from the **account**, never the request. Return `sent: false` with a message on SMTP failure rather than a 500
 - [ ] T-75 [US-08] **Prove with MailDev**: the message appears at <http://localhost:1080> with the right subject and ordering; the empty-day case arrives too; stopping `maildev` produces `sent: false` and leaves all appointments untouched
 - [ ] T-76 [US-14] Add the button to `frontend\scheduler-app\src\pages\Agenda.tsx` (or `CalendarPage.tsx` if US-13 was dropped), **disabled while the request is in flight** so a double-click cannot send two emails, showing success or failure inline
 - [ ] T-77 [US-14] **Prove in the browser**: one press → one message in MailDev; a rapid double-click → still one; MailDev stopped → failure message, list unchanged; idle with the page open → zero messages

@@ -31,4 +31,11 @@ public interface IAppointmentService
     Task<AppointmentResult> CreateAsync(Guid userId, AppointmentRequest request);
     Task<AppointmentResult> UpdateAsync(Guid userId, Guid id, AppointmentRequest request);
     Task<AppointmentStatus> DeleteAsync(Guid userId, Guid id);
+
+    /// <summary>
+    /// Sends today's schedule to the address on the caller's account. Runs only
+    /// because a person pressed a button — there is no timer, hosted service, or
+    /// queue anywhere in this solution (Article VIII).
+    /// </summary>
+    Task<EmailResultResponse> EmailTodayAsync(Guid userId);
 }

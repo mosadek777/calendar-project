@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Scheduler.Api.Data;
 using Scheduler.Api.DTOs;
@@ -8,10 +10,17 @@ namespace Scheduler.Api.Services;
 public class AppointmentService : IAppointmentService
 {
     private readonly SchedulerDbContext _db;
+    private readonly IEmailSender _email;
+    private readonly ILogger<AppointmentService> _logger;
 
-    public AppointmentService(SchedulerDbContext db)
+    public AppointmentService(
+        SchedulerDbContext db,
+        IEmailSender email,
+        ILogger<AppointmentService> logger)
     {
         _db = db;
+        _email = email;
+        _logger = logger;
     }
 
     public async Task<AppointmentListResult> GetRangeAsync(Guid userId, DateOnly from, DateOnly to)
@@ -103,6 +112,71 @@ public class AppointmentService : IAppointmentService
         await _db.SaveChangesAsync();
 
         return AppointmentStatus.Success;
+    }
+
+    public async Task<EmailResultResponse> EmailTodayAsync(Guid userId)
+    {
+        var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
+        if (user is null)
+        {
+            return new EmailResultResponse(false, "We could not find your account.");
+        }
+
+        // Local, not UTC: the spec fixes all dates and times to the machine's own
+        // clock and puts timezones out of scope.
+        var today = DateOnly.FromDateTime(DateTime.Now);
+
+        var appointments = await _db.Appointments
+            .AsNoTracking()
+            .Where(a => a.UserId == userId && a.Date == today)
+            .OrderBy(a => a.StartTime)
+            .ToListAsync();
+
+        var subject = $"Your schedule for {today.ToDateTime(TimeOnly.MinValue).ToString("dddd, d MMMM yyyy", CultureInfo.CurrentCulture)}";
+        var body = BuildPlainTextBody(today, appointments);
+
+        try
+        {
+            // The recipient comes from the account, never from the request.
+            await _email.SendAsync(user.Email, subject, body);
+            return new EmailResultResponse(true, $"Today's schedule was sent to {user.Email}.");
+        }
+        catch (Exception ex)
+        {
+            // A send failure changes no appointment data, and is not a 500 — the
+            // request was valid and nothing broke.
+            _logger.LogWarning(ex, "Sending today's schedule failed.");
+            return new EmailResultResponse(false, "The email could not be sent. Your appointments are unchanged.");
+        }
+    }
+
+    /// <summary>
+    /// Plain text only — one line per appointment, notes indented beneath. No HTML,
+    /// no attachment, no calendar invitation (clarification Q5).
+    /// </summary>
+    private static string BuildPlainTextBody(DateOnly day, IReadOnlyList<Appointment> appointments)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine(day.ToDateTime(TimeOnly.MinValue).ToString("dddd, d MMMM yyyy", CultureInfo.CurrentCulture));
+        builder.AppendLine();
+
+        if (appointments.Count == 0)
+        {
+            builder.AppendLine("Nothing scheduled today.");
+            return builder.ToString();
+        }
+
+        foreach (var appointment in appointments)
+        {
+            builder.AppendLine($"{appointment.StartTime:HH\\:mm}–{appointment.EndTime:HH\\:mm}  {appointment.Title}");
+
+            if (!string.IsNullOrWhiteSpace(appointment.Notes))
+            {
+                builder.AppendLine($"    {appointment.Notes}");
+            }
+        }
+
+        return builder.ToString();
     }
 
     private static bool HasValidTimes(AppointmentRequest request) => request.EndTime > request.StartTime;
