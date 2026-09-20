@@ -215,6 +215,19 @@ all screens exist" requires. Move it back if the literal position was intended.
   motion outside those two cases; any other icon set, UI kit, or CSS framework. `git diff`
   must show no altered behaviour.
 
+- [X] T-78a [DESIGN] **Follow-up to T-78 — remove the dead `/` route.** Found during review of
+  the design pass: the nav's "Today" link pointed at `/`, which still rendered the placeholder
+  landing screen left over from the dropped US-13 — a dead end with no calendar on it and no
+  way back. **Fixed**: the placeholder component is deleted, `/` now forwards to `/calendar`
+  from **inside** the route guard (so a signed-out visitor is still sent to `/login` rather
+  than bounced through it), the catch-all points at `/calendar`, and the "Today" nav item is
+  removed rather than repointed — two items leading to one screen would be redundant, and a
+  "Today" link that does not actually jump to today would require resetting calendar state,
+  which is behaviour and therefore outside this task. The brand lockup is now the link back.
+  Routing configuration and templates only; no handler, state, fetch or validation changed.
+  **Why it is recorded here**: a route disappearing between T-78 and the audit should read as
+  the removal of a dead end, not as an unexplained deletion.
+
 ---
 
 ## Phase 11 — Verification (project Phases 8 and 9)

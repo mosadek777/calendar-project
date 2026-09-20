@@ -1,52 +1,26 @@
 import { CalendarDays, LogOut } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
-import { cn } from 'cn'
 
-/** Moves between the agenda and the calendar, the two screens of clarification Q4. */
+/**
+ * There is one signed-in screen, so there is no nav list: US-13 was dropped and
+ * the agenda screen it would have linked to was never built. The lockup is the
+ * wayfinding — it returns to the calendar.
+ */
 export function Nav() {
   const { email, signOut } = useAuth()
-  const { pathname } = useLocation()
-
-  const links = [
-    { to: '/', label: 'Today' },
-    { to: '/calendar', label: 'Calendar' },
-  ]
 
   return (
     <header className="border-border/80 bg-background/80 sticky top-0 z-30 border-b backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
-        <div className="flex items-center gap-6">
-          <span className="flex items-center gap-2 font-semibold tracking-tight">
-            <CalendarDays className="text-accent size-[18px]" strokeWidth={2} aria-hidden />
-            Scheduler
-          </span>
-
-          <nav className="flex items-center gap-1">
-            {links.map((link) => {
-              const active = pathname === link.to
-              return (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  aria-current={active ? 'page' : undefined}
-                  className={cn(
-                    'focus-visible:ring-ring relative rounded-md px-2.5 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none',
-                    active
-                      ? 'text-foreground'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-surface-hover',
-                  )}
-                >
-                  {link.label}
-                  {active && (
-                    <span className="bg-accent absolute inset-x-2.5 -bottom-[11px] h-px" aria-hidden />
-                  )}
-                </Link>
-              )
-            })}
-          </nav>
-        </div>
+        <Link
+          to="/calendar"
+          className="focus-visible:ring-ring flex items-center gap-2 rounded-md font-semibold tracking-tight transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-transparent focus-visible:outline-none"
+        >
+          <CalendarDays className="text-accent size-[18px]" strokeWidth={2} aria-hidden />
+          Scheduler
+        </Link>
 
         <div className="flex min-w-0 items-center gap-2">
           <span className="text-muted-foreground hidden max-w-[22ch] truncate text-sm sm:inline">
