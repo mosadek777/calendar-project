@@ -110,7 +110,7 @@ specs/001-scheduler/
 backend/Scheduler.Api/
 ├── Controllers/
 │   ├── AuthController.cs            # register, login
-│   └── AppointmentsController.cs    # range, create, update, delete, email-today
+│   └── AppointmentsController.cs    # range, create, update, delete, email-day
 ├── Services/
 │   ├── IAuthService.cs / AuthService.cs
 │   ├── IAppointmentService.cs / AppointmentService.cs
@@ -310,7 +310,7 @@ natural home on screen.
 | `IAppointmentService` | `AppointmentService` | Scoped | All appointment reads/writes, all ownership checks, all validation beyond annotations |
 | `IEmailSender` | `SmtpEmailSender` | Scoped | Send one plain-text message; knows nothing about appointments |
 
-`AppointmentService` composes `IEmailSender` for the email-today operation: it builds the
+`AppointmentService` composes `IEmailSender` for the email-day operation: it builds the
 message text from today's appointments and hands the finished subject and body to the sender.
 The sender stays ignorant of the domain, which is what makes it swappable.
 

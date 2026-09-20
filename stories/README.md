@@ -22,7 +22,7 @@
 | [US-05](backend/US-05-create-appointment.md) | Create an appointment | P3 | 3 |
 | [US-06](backend/US-06-update-appointment.md) | Update an appointment | P4 | 4 |
 | [US-07](backend/US-07-delete-appointment.md) | Delete an appointment | P4 | 4 |
-| [US-08](backend/US-08-email-todays-schedule.md) | Email me today's schedule | P6 | **6 — dropped first** |
+| [US-08](backend/US-08-email-todays-schedule.md) | Email me a day’s schedule | P6 | **6 — dropped first (kept; US-13 went instead)** |
 
 ### Frontend — `stories\frontend\`
 
@@ -33,7 +33,7 @@
 | [US-11](frontend/US-11-create-appointment-form.md) | Create an appointment from the selected day | P3 | 3 |
 | [US-12](frontend/US-12-edit-and-delete-appointment.md) | Edit and delete an appointment | P4 | 4 |
 | [US-13](frontend/US-13-todays-agenda-screen.md) | Today's agenda as the landing screen | P5 | ❌ **DROPPED — not built** (redundant with the calendar's day panel; see plan.md) |
-| [US-14](frontend/US-14-email-schedule-button.md) | The "email me today's schedule" button | P6 | **6 — dropped first** |
+| [US-14](frontend/US-14-email-schedule-button.md) | The “email me this day’s schedule” button | P6 | **6 — dropped first (kept)** |
 
 ---
 
@@ -112,9 +112,9 @@ back to at least one requirement.
 | FR-018 | Edit any detail including the date | US-06 | US-12 |
 | FR-019 | Permanent delete after confirmation, no undo | US-07 | US-12 |
 | FR-020 | Marks and lists update after edit or delete | — | US-12 |
-| FR-021 | Today's appointments on the landing screen | US-04 | US-13 |
-| FR-022 | Plain "nothing scheduled today" message | — | US-13 |
-| FR-023 | Button sends today's schedule to registered address | US-08 | US-14 |
+| FR-021 | Today’s appointments on the landing screen | US-04 | ~~US-13~~ **unmet — story dropped** |
+| FR-022 | Plain “nothing scheduled today” message | — | ~~US-13~~ **unmet — story dropped** |
+| FR-023 | Button sends the selected day’s schedule to registered address | US-08 | US-14 |
 | FR-023a | Plain text, one line per appointment, dated subject | US-08 | — |
 | FR-024 | Sent only on press; never scheduled | US-08 | US-14 |
 | FR-025 | Empty day still sends an email saying so | US-08 | — |

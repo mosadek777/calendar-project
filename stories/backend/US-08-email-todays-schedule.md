@@ -39,7 +39,7 @@ have my day in my inbox without keeping the app open.
 
 ## Provisional contract
 
-`POST /api/appointments/email-today` — no request body, response `{ sent, message }`.
+`POST /api/appointments/email-day?date=YYYY-MM-DD` — no request body, response `{ sent, message }`.
 
 ## Acceptance criteria
 

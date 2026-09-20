@@ -21,7 +21,7 @@ No story label: this is the ground everything stands on.
 
 - [X] T-01 [SETUP] Verify MailDev is listening — `Test-NetConnection -ComputerName localhost -Port 1025` returns `TcpTestSucceeded: True`, and <http://localhost:1080> opens. If not, restart `maildev` before going further
 - [X] T-02 [SETUP] Verify LocalDB is running — `sqllocaldb info MSSQLLocalDB`; start it with `sqllocaldb start MSSQLLocalDB` if stopped
-- [X] T-03 [SETUP] Create the API project: `dotnet new webapi --use-controllers -n Scheduler.Api -o backend\Scheduler.Api`. **No solution file** — one project does not need one, and Article III allows nothing in the repo root. **`--use-controllers` is not optional**: without it .NET 8 scaffolds a minimal-API project with no `Controllers\` folder, no `AddControllers()` and no `MapControllers()`, and every controller task below would have to be retrofitted
+- [X] T-03 [SETUP] Create the API project: `dotnet new webapi --use-controllers -n Scheduler.Api -o backend\Scheduler.Api`. **No solution file** — one project does not need one, and Article III allows nothing in the repo root. **`--use-controllers` is not optional**: without it .NET 8 and later scaffold a minimal-API project with no `Controllers\` folder, no `AddControllers()` and no `MapControllers()`, and every controller task below would have to be retrofitted
 - [X] T-04 [SETUP] Add packages to `backend\Scheduler.Api\Scheduler.Api.csproj`: `Microsoft.AspNetCore.Authentication.JwtBearer`, `Microsoft.EntityFrameworkCore.SqlServer`, `Microsoft.EntityFrameworkCore.Design`, `Microsoft.Extensions.Identity.Core`, `Swashbuckle.AspNetCore`
 - [X] T-05 [SETUP] Create exactly these folders under `backend\Scheduler.Api\`: `Controllers\`, `Services\`, `Data\`, `Models\`, `DTOs\`. No others — Article III
 - [X] T-06 [SETUP] Write `backend\Scheduler.Api\appsettings.json` with **non-secret** `Jwt` (issuer, audience, 480-minute lifetime) and `Smtp` (FromAddress, FromName) keys only
@@ -232,9 +232,9 @@ all screens exist" requires. Move it back if the literal position was intended.
 
 ## Phase 11 — Verification (project Phases 8 and 9)
 
-- [ ] T-79 [VERIFY] **Write** the manual test checklist to `specs\001-scheduler\checklists\manual-test.md`, one checkbox per acceptance criterion of every story that was actually built, grouped by story and marked with the Swagger or browser step that proves it. Skip the stories that were dropped
+- [X] T-79 [VERIFY] **Write** the manual test checklist to `specs\001-scheduler\checklists\manual-test.md`, one checkbox per acceptance criterion of every story that was actually built, grouped by story and marked with the Swagger or browser step that proves it. Skip the stories that were dropped
 - [ ] T-80 [VERIFY] Walk that checklist end to end in a clean browser profile, recording each result. No automated test project — Article IX
-- [ ] T-81 [VERIFY] Audit the delivered code against all nine constitution articles, reporting every violation found: banned folders or patterns, entities crossing a controller, any client-supplied user id, any non-`async` DB call, `appsettings.Development.json` in git, any non-shadcn UI component, any background job
+- [X] T-81 [VERIFY] Audit the delivered code against all nine constitution articles, reporting every violation found: banned folders or patterns, entities crossing a controller, any client-supplied user id, any non-`async` DB call, `appsettings.Development.json` in git, any non-shadcn UI component, any background job
 
 ---
 

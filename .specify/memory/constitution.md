@@ -198,9 +198,24 @@ article here, the article wins.
   wording.
 - **Compliance** is verified at every phase gate: spec, plan, tasks, and the final review each
   check their output against these articles. A violation MUST be fixed, or explicitly waived
-  by the developer in writing, before the phase is approved.
+  by the developer in writing, before the phase is approved. Waivers are recorded under
+  **Recorded waivers** below and do not bump the version, because no article's text changes.
 - **Complexity** carries the burden of proof. The default answer to "should we add a layer, a
   library, or an abstraction" is NO unless a named article requires it.
+
+### Recorded waivers
+
+A waiver records a violation the developer chose to accept in writing, as the Compliance rule
+above provides for. It does **not** change any article: the rule still stands for every other
+case, and the exception stays visible rather than being legislated away.
+
+- **2026-09-20 — Article III, one file at the repository root.** `design-system.md` is placed at
+  the repository root, which Article III forbids. **Accepted by the developer**, on the grounds
+  that a design system is a repository-level document rather than one belonging to
+  `specs\001-scheduler\`, and that the alternatives were worse: amending Article III would
+  weaken a rule that has been useful all project in order to fit one file, and relocating the
+  document would hide that an exception was ever needed. **Scope: this one file only.** Anything
+  else appearing at the root is still a violation.
 
 ### Amendment log
 
