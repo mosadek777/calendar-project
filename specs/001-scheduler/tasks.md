@@ -68,10 +68,10 @@ Blocking: every story below needs these. Nothing here is story-specific.
 
 **Goal**: one range endpoint feeding the month marks, the day panel, and today's agenda.
 
-- [ ] T-28 [US-04] [P] Create `backend\Scheduler.Api\DTOs\AppointmentResponse.cs` — `Id`, `Title`, `Notes`, `Date`, `StartTime`, `EndTime`, `CreatedAt`. **No `UserId`** — Article V
-- [ ] T-29 [US-04] Create `backend\Scheduler.Api\Services\IAppointmentService.cs` and `AppointmentService.cs` with `GetRangeAsync(Guid userId, DateOnly from, DateOnly to)` — `Where(a => a.UserId == userId && a.Date >= from && a.Date <= to)`, ordered by `Date` then `StartTime`, `await`ed, mapped to DTOs by hand
-- [ ] T-30 [US-04] Create `backend\Scheduler.Api\Controllers\AppointmentsController.cs` with `[Authorize]` on the class and a `GET` action taking `from` and `to`, passing the claim-derived `userId` as the **first argument**. Refuse `to < from` with 400
-- [ ] T-31 [US-04] Register `IAppointmentService` in `Program.cs` DI
+- [X] T-28 [US-04] [P] Create `backend\Scheduler.Api\DTOs\AppointmentResponse.cs` — `Id`, `Title`, `Notes`, `Date`, `StartTime`, `EndTime`, `CreatedAt`. **No `UserId`** — Article V
+- [X] T-29 [US-04] Create `backend\Scheduler.Api\Services\IAppointmentService.cs` and `AppointmentService.cs` with `GetRangeAsync(Guid userId, DateOnly from, DateOnly to)` — `Where(a => a.UserId == userId && a.Date >= from && a.Date <= to)`, ordered by `Date` then `StartTime`, `await`ed, mapped to DTOs by hand
+- [X] T-30 [US-04] Create `backend\Scheduler.Api\Controllers\AppointmentsController.cs` with `[Authorize]` on the class and a `GET` action taking `from` and `to`, passing the claim-derived `userId` as the **first argument**. Refuse `to < from` with 400
+- [X] T-31 [US-04] Register `IAppointmentService` in `Program.cs` DI
 - [ ] T-32 [US-04] **Prove in Swagger**: insert two appointments directly in the database, then confirm a month range returns both, a single-day range (`from == to`) returns one, an empty range returns `[]` with 200, and ordering is by date then start time
 
 ---
@@ -80,12 +80,12 @@ Blocking: every story below needs these. Nothing here is story-specific.
 
 **Goal**: the backend is finished and fully demonstrable without a browser.
 
-- [ ] T-33 [US-05] [P] Create `backend\Scheduler.Api\DTOs\AppointmentRequest.cs` — `Title` `[Required][MaxLength(200)]`, `Notes` `[MaxLength(1000)]`, `Date` (DateOnly) `[Required]`, `StartTime` and `EndTime` (TimeOnly) `[Required]`. **No user id property** — there must be nothing for a client to spoof
-- [ ] T-34 [US-05] Add **one** private validation method to `AppointmentService.cs` enforcing `EndTime > StartTime`, called by both create and update so the two can never drift
-- [ ] T-35 [US-05] Add `CreateAsync(Guid userId, AppointmentRequest req)` — assign `UserId` from the parameter and `CreatedAt` from `DateTime.UtcNow`, save, return the created DTO with its new id
-- [ ] T-36 [US-06] Add `UpdateAsync(Guid userId, Guid id, AppointmentRequest req)` — fetch with `FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId)`, `null` → **404**, apply the same validation, leave `CreatedAt` untouched
-- [ ] T-37 [US-07] Add `DeleteAsync(Guid userId, Guid id)` — same owner-scoped fetch, `null` → **404**, then `Remove` and save. A real row delete; no soft-delete column exists
-- [ ] T-38 [US-05] Add the `POST` (201), `PUT` (200) and `DELETE` (204) actions to `AppointmentsController.cs`, each thin and each passing the claim-derived `userId` first
+- [X] T-33 [US-05] [P] Create `backend\Scheduler.Api\DTOs\AppointmentRequest.cs` — `Title` `[Required][MaxLength(200)]`, `Notes` `[MaxLength(1000)]`, `Date` (DateOnly) `[Required]`, `StartTime` and `EndTime` (TimeOnly) `[Required]`. **No user id property** — there must be nothing for a client to spoof
+- [X] T-34 [US-05] Add **one** private validation method to `AppointmentService.cs` enforcing `EndTime > StartTime`, called by both create and update so the two can never drift
+- [X] T-35 [US-05] Add `CreateAsync(Guid userId, AppointmentRequest req)` — assign `UserId` from the parameter and `CreatedAt` from `DateTime.UtcNow`, save, return the created DTO with its new id
+- [X] T-36 [US-06] Add `UpdateAsync(Guid userId, Guid id, AppointmentRequest req)` — fetch with `FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId)`, `null` → **404**, apply the same validation, leave `CreatedAt` untouched
+- [X] T-37 [US-07] Add `DeleteAsync(Guid userId, Guid id)` — same owner-scoped fetch, `null` → **404**, then `Remove` and save. A real row delete; no soft-delete column exists
+- [X] T-38 [US-05] Add the `POST` (201), `PUT` (200) and `DELETE` (204) actions to `AppointmentsController.cs`, each thin and each passing the claim-derived `userId` first
 - [ ] T-39 [US-05] **Prove in Swagger**: create succeeds and returns an id; empty title → 400; title over 200 chars → 400; notes over 1000 → 400; end time equal to start → 400; `09:07:00` is accepted; a planted `userId` in the body changes nothing
 - [ ] T-40 [US-06] **Prove in Swagger**: edit a field; change the date and confirm the old day's range no longer returns it and the new day's does; confirm `CreatedAt` is unchanged
 - [ ] T-41 [US-07] **Prove in Swagger**: delete returns 204 and the appointment leaves the range; a second delete returns 404; confirm in the database the row is **gone**, not flagged
